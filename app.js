@@ -73,17 +73,23 @@ const translations = {
 
 let currentLang = 'ru';
 
+// ========== ТЕЛЕГРАМ НАСТРОЙКИ (ГОТОВО) ==========
+const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
+const CHAT_ID = '897174464';
+
 // ========== РАСЧЁТ ЦЕНЫ ==========
 function calculateTotal() {
     let total = 0;
-    const selectedService = document.querySelector('input[name="service"]:checked').value;
+    const selectedService = document.querySelector('input[name="service"]:checked');
+    if (!selectedService) return 500;
+    
     const prices = {
         standard: 500,
         general: 950,
         after_repair: 1800,
         office: 700
     };
-    total = prices[selectedService] || 500;
+    total = prices[selectedService.value] || 500;
     
     if (document.getElementById('extra_ac')?.checked) total += 200;
     if (document.getElementById('extra_window')?.checked) total += 150;
@@ -92,6 +98,80 @@ function calculateTotal() {
     const totalEl = document.getElementById('totalPrice');
     if (totalEl) totalEl.innerHTML = total.toLocaleString('tr-TR') + ' ₺';
     return total;
+}
+
+// ========== ПОЛУЧИТЬ ТЕКСТ УСЛУГИ ==========
+function getSelectedServiceText() {
+    const selected = document.querySelector('input[name="service"]:checked');
+    if (!selected) return 'Стандартная';
+    const parent = selected.closest('.service-option');
+    const strong = parent?.querySelector('strong');
+    return strong ? strong.innerText : 'Стандартная';
+}
+
+// ========== ПОЛУЧИТЬ ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ ==========
+function getExtras() {
+    const extras = [];
+    if (document.getElementById('extra_ac')?.checked) extras.push('Чистка кондиционера');
+    if (document.getElementById('extra_window')?.checked) extras.push('Мойка окон');
+    if (document.getElementById('extra_fridge')?.checked) extras.push('Чистка холодильника');
+    return extras.join(', ') || 'Нет';
+}
+
+// ========== ОЧИСТИТЬ ФОРМУ ==========
+function clearForm() {
+    const addressInput = document.getElementById('address');
+    if (addressInput) addressInput.value = '';
+    
+    const acCheck = document.getElementById('extra_ac');
+    const windowCheck = document.getElementById('extra_window');
+    const fridgeCheck = document.getElementById('extra_fridge');
+    if (acCheck) acCheck.checked = false;
+    if (windowCheck) windowCheck.checked = false;
+    if (fridgeCheck) fridgeCheck.checked = false;
+    
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+    }
+}
+
+// ========== ОТПРАВКА В ТЕЛЕГРАМ ==========
+function sendToTelegram(order) {
+    const message = `🚨 НОВЫЙ ЗАКАЗ SUP TEMIZ!
+━━━━━━━━━━━━━━━━━━━━━
+👤 Клиент: ${order.userName}
+📞 Телефон: ${order.userPhone}
+📍 Район: ${order.district}
+🏠 Адрес: ${order.address}
+🧹 Услуга: ${order.service}
+✨ Дополнительно: ${order.extras}
+📅 Дата: ${order.orderDate}
+⏰ Время: ${order.orderTime}
+💰 Сумма: ${order.total} ₺
+🆔 ID: ${order.id}
+━━━━━━━━━━━━━━━━━━━━━
+⏰ ${new Date().toLocaleString('ru-RU')}`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            console.log('✅ Уведомление отправлено в Telegram');
+        } else {
+            console.log('❌ Ошибка Telegram:', data.description);
+        }
+    })
+    .catch(err => console.log('❌ Ошибка отправки:', err));
 }
 
 // ========== СОХРАНЕНИЕ ЗАКАЗА ==========
@@ -110,91 +190,41 @@ function saveOrder() {
         return false;
     }
     
+    const districtSelect = document.getElementById('district');
+    const timeSelect = document.getElementById('time');
+    
     const order = {
         id: Date.now(),
         date: new Date().toISOString(),
-        district: document.getElementById('district')?.options[document.getElementById('district').selectedIndex]?.text || '',
+        district: districtSelect?.options[districtSelect.selectedIndex]?.text || '',
         address: address,
         service: getSelectedServiceText(),
         extras: getExtras(),
         orderDate: document.getElementById('date')?.value || new Date().toISOString().split('T')[0],
-        orderTime: document.getElementById('time')?.options[document.getElementById('time').selectedIndex]?.text || '',
+        orderTime: timeSelect?.options[timeSelect.selectedIndex]?.text || '',
         total: calculateTotal(),
         status: 'Ожидает подтверждения',
         userName: name,
         userPhone: phone,
-        userEmail: document.getElementById('userEmail')?.value || ''
+        userEmail: document.getElementById('userEmail')?.value || '',
+        paymentMethod: 'Наличные'
     };
     
+    // Сохраняем в localStorage
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.unshift(order);
     localStorage.setItem('orders', JSON.stringify(orders));
     
-    showToast(translations[currentLang].order_confirmed);
+    // Отправляем уведомление
     sendToTelegram(order);
+    
+    showToast(translations[currentLang].order_confirmed);
     loadHistory();
     clearForm();
     return true;
 }
 
-function getSelectedServiceText() {
-    const selected = document.querySelector('input[name="service"]:checked');
-    if (!selected) return 'Стандартная';
-    const parent = selected.closest('.service-option');
-    const strong = parent?.querySelector('strong');
-    return strong ? strong.innerText : 'Стандартная';
-}
-
-function getExtras() {
-    const extras = [];
-    if (document.getElementById('extra_ac')?.checked) extras.push('Чистка кондиционера');
-    if (document.getElementById('extra_window')?.checked) extras.push('Мойка окон');
-    if (document.getElementById('extra_fridge')?.checked) extras.push('Чистка холодильника');
-    return extras.join(', ') || 'Нет';
-}
-
-function clearForm() {
-    const addressInput = document.getElementById('address');
-    if (addressInput) addressInput.value = '';
-    const acCheck = document.getElementById('extra_ac');
-    const windowCheck = document.getElementById('extra_window');
-    const fridgeCheck = document.getElementById('extra_fridge');
-    if (acCheck) acCheck.checked = false;
-    if (windowCheck) windowCheck.checked = false;
-    if (fridgeCheck) fridgeCheck.checked = false;
-    const dateInput = document.getElementById('date');
-    if (dateInput) dateInput.value = '';
-}
-
-// ========== TELEGRAM ==========
-function sendToTelegram(order) {
-    const message = `
-🚨 НОВЫЙ ЗАКАЗ SUP TEMIZ!
-━━━━━━━━━━━━━━━━━━━━━
-👤 Клиент: ${order.userName}
-📞 Телефон: ${order.userPhone}
-📍 Район: ${order.district}
-🏠 Адрес: ${order.address}
-🧹 Услуга: ${order.service}
-✨ Дополнительно: ${order.extras}
-📅 Дата: ${order.orderDate}
-⏰ Время: ${order.orderTime}
-💰 Сумма: ${order.total} ₺
-🆔 ID: ${order.id}
-━━━━━━━━━━━━━━━━━━━━━
-    `;
-    console.log('Telegram message:', message);
-    // Раскомментируйте когда получите токен бота:
-    // const BOT_TOKEN = 'ВАШ_ТОКЕН';
-    // const CHAT_ID = 'ВАШ_CHAT_ID';
-    // fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-    // });
-}
-
-// ========== ИСТОРИЯ ==========
+// ========== ЗАГРУЗКА ИСТОРИИ ==========
 function loadHistory() {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const container = document.getElementById('historyList');
@@ -209,18 +239,20 @@ function loadHistory() {
         <div class="history-item">
             <strong>${new Date(order.date).toLocaleDateString('ru-RU')}</strong><br>
             ${order.service} • ${order.total} ₺<br>
-            <small>${order.address} • ${order.status}</small>
+            <small>${order.address.substring(0, 30)} • ${order.status}</small>
             <button class="btn-small" onclick="repeatOrder(${order.id})">🔄 Повторить</button>
         </div>
     `).join('');
 }
 
+// ========== ПОВТОРИТЬ ЗАКАЗ ==========
 function repeatOrder(orderId) {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const order = orders.find(o => o.id === orderId);
     if (order) {
         const addressInput = document.getElementById('address');
         if (addressInput) addressInput.value = order.address;
+        
         const districtSelect = document.getElementById('district');
         if (districtSelect) {
             for (let i = 0; i < districtSelect.options.length; i++) {
@@ -230,21 +262,24 @@ function repeatOrder(orderId) {
                 }
             }
         }
+        
         document.querySelector('.nav-tab[data-tab="order"]')?.click();
-        showToast('Данные из прошлого заказа заполнены');
+        showToast('📋 Данные из прошлого заказа заполнены');
     }
 }
 
-// ========== ПРОФИЛЬ ==========
+// ========== ЗАГРУЗКА ПРОФИЛЯ ==========
 function loadProfile() {
     const nameInput = document.getElementById('userName');
     const phoneInput = document.getElementById('userPhone');
     const emailInput = document.getElementById('userEmail');
+    
     if (nameInput) nameInput.value = localStorage.getItem('userName') || '';
     if (phoneInput) phoneInput.value = localStorage.getItem('userPhone') || '';
     if (emailInput) emailInput.value = localStorage.getItem('userEmail') || '';
 }
 
+// ========== СОХРАНЕНИЕ ПРОФИЛЯ ==========
 function saveProfile() {
     const name = document.getElementById('userName')?.value || '';
     const phone = document.getElementById('userPhone')?.value || '';
@@ -260,7 +295,7 @@ function saveProfile() {
     }
 }
 
-// ========== ПЕРЕКЛЮЧЕНИЕ ТАБОВ (ГЛАВНОЕ ИСПРАВЛЕНИЕ!) ==========
+// ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
 function initTabs() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
@@ -269,18 +304,14 @@ function initTabs() {
         tab.addEventListener('click', () => {
             const tabId = tab.getAttribute('data-tab');
             
-            // Убираем активный класс у всех табов
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             
-            // Прячем все содержимое
             contents.forEach(content => content.classList.remove('active'));
             
-            // Показываем нужное
             const activeContent = document.getElementById(`${tabId}-tab`);
             if (activeContent) activeContent.classList.add('active');
             
-            // Обновляем историю если открыли вкладку истории
             if (tabId === 'history') loadHistory();
             if (tabId === 'profile') loadProfile();
         });
@@ -302,7 +333,7 @@ function setLanguage(lang) {
     }
 }
 
-// ========== TOAST ==========
+// ========== ПОКАЗ СООБЩЕНИЯ ==========
 function showToast(message) {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -313,14 +344,14 @@ function showToast(message) {
 
 // ========== ИНИЦИАЛИЗАЦИЯ ==========
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('SupTemiz загружен!');
+    console.log('🚀 SupTemiz загружен!');
     
     initTabs();
     loadProfile();
     loadHistory();
     calculateTotal();
     
-    // Слушатели
+    // Слушатели изменения цены
     const serviceRadios = document.querySelectorAll('input[name="service"]');
     serviceRadios.forEach(el => el.addEventListener('change', calculateTotal));
     
@@ -330,12 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('change', calculateTotal);
     });
     
+    // Кнопки
     const orderBtn = document.getElementById('orderBtn');
     if (orderBtn) orderBtn.addEventListener('click', saveOrder);
     
     const saveProfileBtn = document.getElementById('saveProfileBtn');
     if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveProfile);
     
+    // Переключение языка
     const langBtns = document.querySelectorAll('.lang-btn');
     langBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -345,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Устанавливаем сегодняшнюю дату в поле date
+    // Устанавливаем сегодняшнюю дату
     const dateInput = document.getElementById('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
