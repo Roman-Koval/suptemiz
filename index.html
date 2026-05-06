@@ -34,7 +34,6 @@
             </div>
         </div>
 
-        <!-- НАВИГАЦИЯ - ТАБЫ -->
         <nav class="main-nav">
             <button class="nav-tab active" data-tab="order">
                 <span>📋</span>
@@ -50,7 +49,6 @@
             </button>
         </nav>
 
-        <!-- ВКЛАДКА ЗАКАЗ -->
         <div class="tab-content active" id="order-tab">
             <div class="location-card">
                 <div class="card-title">
@@ -156,7 +154,6 @@
             </button>
         </div>
 
-        <!-- ВКЛАДКА ИСТОРИЯ -->
         <div class="tab-content" id="history-tab">
             <div class="history-list" id="historyList">
                 <div class="empty-state">
@@ -166,19 +163,18 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА ПРОФИЛЬ -->
         <div class="tab-content" id="profile-tab">
             <div class="profile-card">
                 <div class="avatar">👤</div>
-                <input type="text" id="userName" placeholder="Ваше имя" class="form-input" value="Roman">
-                <input type="tel" id="userPhone" placeholder="Телефон" class="form-input" value="0852159181">
-                <input type="email" id="userEmail" placeholder="Email" class="form-input" value="iekovalrv@gmail.com">
+                <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
+                <input type="tel" id="userPhone" placeholder="Телефон (0533 123 45 67)" class="form-input">
+                <input type="email" id="userEmail" placeholder="Email (для чека)" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
             <div class="info-card">
                 <h4>📞 Контакты поддержки</h4>
                 <p>WhatsApp: <a href="https://wa.me/905338888888">+90 533 888 88 88</a></p>
-                <p>Telegram: @suptemiz_support</p>
+                <p>Telegram: <a href="https://t.me/suptemiz_bot">@suptemiz_bot</a></p>
             </div>
         </div>
     </div>
@@ -186,5 +182,12 @@
     <div class="toast-message" id="toast"></div>
     
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW error:', err));
+        }
+    </script>
 </body>
 </html>
