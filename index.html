@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TemizYap">
+    <title>TemizYap - Клининг Северный Кипр</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🧹</span>
+                <span class="logo-text">Temiz<span class="accent">Yap</span></span>
+            </div>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="tr">TR</button>
+            </div>
+        </header>
+
+        <div class="promo-banner">
+            <div class="promo-text">
+                <span>🎉</span>
+                <span data-i18n="promo">Первая уборка со скидкой 20%</span>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <button class="nav-tab active" data-tab="order">
+                <span>📋</span>
+                <span data-i18n="nav_order">Заказ</span>
+            </button>
+            <button class="nav-tab" data-tab="history">
+                <span>📜</span>
+                <span data-i18n="nav_history">История</span>
+            </button>
+            <button class="nav-tab" data-tab="profile">
+                <span>👤</span>
+                <span data-i18n="nav_profile">Профиль</span>
+            </button>
+        </nav>
+
+        <!-- Вкладка Заказ -->
+        <div class="tab-content active" id="order-tab">
+            <div class="location-card">
+                <div class="card-title">
+                    <span>📍</span>
+                    <h3 data-i18n="location_title">Ваш район</h3>
+                </div>
+                <select id="district" class="form-select">
+                    <option value="lefkosa">Лефкоша (Никосия)</option>
+                    <option value="girne">Гирне (Кирения)</option>
+                    <option value="gazimagusa">Газимагуса (Фамагуста)</option>
+                    <option value="iskele">Искеле (Трикомо)</option>
+                    <option value="guzelyurt">Гюзельюрт (Морфу)</option>
+                </select>
+                <input type="text" id="address" placeholder="Улица, дом, квартира" class="form-input">
+            </div>
+
+            <div class="service-card">
+                <div class="card-title">
+                    <span>🧹</span>
+                    <h3 data-i18n="service_title">Тип уборки</h3>
+                </div>
+                <div class="service-grid">
+                    <label class="service-option">
+                        <input type="radio" name="service" value="standard" checked>
+                        <div class="service-info">
+                            <strong data-i18n="service_standard">Стандартная</strong>
+                            <small>1-2 комнаты, 2-3 часа</small>
+                        </div>
+                        <span class="price">500 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="general">
+                        <div class="service-info">
+                            <strong data-i18n="service_general">Генеральная</strong>
+                            <small>3+ комнаты, 4-6 часа</small>
+                        </div>
+                        <span class="price">950 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="after_repair">
+                        <div class="service-info">
+                            <strong data-i18n="service_after">После ремонта</strong>
+                            <small>Полное удаление пыли</small>
+                        </div>
+                        <span class="price">1800 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="office">
+                        <div class="service-info">
+                            <strong data-i18n="service_office">Офисная</strong>
+                            <small>до 50 м²</small>
+                        </div>
+                        <span class="price">700 ₺</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="extras-card">
+                <div class="card-title">
+                    <span>✨</span>
+                    <h3 data-i18n="extras_title">Дополнительно</h3>
+                </div>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_ac" value="200">
+                    <span data-i18n="extra_ac">Чистка кондиционера (до 2 шт.)</span>
+                    <span class="price">+200 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_window" value="150">
+                    <span data-i18n="extra_window">Мойка окон (до 6 шт.)</span>
+                    <span class="price">+150 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_fridge" value="100">
+                    <span data-i18n="extra_fridge">Чистка холодильника</span>
+                    <span class="price">+100 ₺</span>
+                </label>
+            </div>
+
+            <div class="date-card">
+                <div class="card-title">
+                    <span>📅</span>
+                    <h3 data-i18n="date_title">Дата и время</h3>
+                </div>
+                <input type="date" id="date" class="form-input">
+                <select id="time" class="form-select">
+                    <option value="09:00">09:00 - 12:00</option>
+                    <option value="12:00">12:00 - 15:00</option>
+                    <option value="15:00">15:00 - 18:00</option>
+                    <option value="18:00">18:00 - 21:00</option>
+                </select>
+            </div>
+
+            <div class="payment-card">
+                <div class="card-title">
+                    <span>💳</span>
+                    <h3 data-i18n="payment_title">Способ оплаты</h3>
+                </div>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="cash" checked>
+                        <span>💵 Наличные курьеру</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="card">
+                        <span>💳 Карта онлайн</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="total-card">
+                <div class="total-row">
+                    <span data-i18n="total_title">Итого:</span>
+                    <span class="total-price" id="totalPrice">500 ₺</span>
+                </div>
+                <div class="delivery-note" id="deliveryNote">
+                    ⚡ Доступна оплата наличными
+                </div>
+            </div>
+
+            <button class="btn-primary" id="orderBtn">
+                📞 Оформить заказ
+            </button>
+        </div>
+
+        <!-- Вкладка История -->
+        <div class="tab-content" id="history-tab">
+            <div class="history-list" id="historyList">
+                <div class="empty-state">
+                    <span>📭</span>
+                    <p data-i18n="no_orders">У вас пока нет заказов</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка Профиль -->
+        <div class="tab-content" id="profile-tab">
+            <div class="profile-card">
+                <div class="avatar">👤</div>
+                <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
+                <input type="tel" id="userPhone" placeholder="Телефон (например, 0533 123 45 67)" class="form-input">
+                <input type="email" id="userEmail" placeholder="Email (для чека)" class="form-input">
+                <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
+            </div>
+            <div class="info-card">
+                <h4>📞 Контакты поддержки</h4>
+                <p>WhatsApp: <a href="https://wa.me/905338888888">+90 533 888 88 88</a></p>
+                <p>Telegram: @temizyap_support</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-message" id="toast"></div>
+    
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW error:', err));
+        }
+    </script>
+</body>
+</html>
