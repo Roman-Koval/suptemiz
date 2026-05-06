@@ -309,3 +309,158 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+// ========== ОНЛАЙН ОПЛАТА ЧЕРЕЗ PAYTR ==========
+// ВАЖНО: замените на свои данные после регистрации в PayTR
+const PAYTR_MERCHANT_ID = 'YOUR_MERCHANT_ID';
+const PAYTR_MERCHANT_KEY = 'YOUR_MERCHANT_KEY';
+const PAYTR_MERCHANT_SALT = 'YOUR_MERCHANT_SALT';
+
+async function processPayment(order) {
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    
+    if (paymentMethod === 'cash') {
+        // Наличными - просто сохраняем заказ
+        saveOrderToLocal(order);
+        showToast(translations[currentLang].order_confirmed);
+        sendToTelegram(order);
+        return true;
+    }
+    
+    // Онлайн оплата через PayTR
+    showToast('🔄 Перенаправление на оплату...');
+    
+    const paymentData = {
+        merchant_id: PAYTR_MERCHANT_ID,
+        user_ip: await getUserIP(),
+        merchant_oid: order.id.toString(),
+        email: localStorage.getItem('userEmail') || '',
+        payment_amount: order.total,
+        currency: 'TRY',
+        test_mode: '1', // 1 = тестовый режим
+        non_3d: '0',
+        timeout_limit: '30',
+        lang: currentLang === 'tr' ? 'tr' : 'en',
+        success_url: window.location.origin + '/payment-success.html?order_id=' + order.id,
+        fail_url: window.location.origin + '/payment-cancel.html',
+        merchant_ok_url: window.location.origin + '/payment-success.html',
+        merchant_fail_url: window.location.origin + '/payment-cancel.html',
+        user_name: localStorage.getItem('userName') || '',
+        user_phone: localStorage.getItem('userPhone') || ''
+    };
+    
+    // Генерируем подпись
+    const hashStr = `${PAYTR_MERCHANT_ID}${paymentData.user_ip}${paymentData.merchant_oid}${paymentData.email}${paymentData.payment_amount}${paymentData.currency}${paymentData.test_mode}${paymentData.non_3d}${paymentData.timeout_limit}${PAYTR_MERCHANT_KEY}`;
+    const token = await sha256(hashStr);
+    paymentData.paytr_token = token;
+    
+    // Отправляем запрос на PayTR
+    try {
+        const response = await fetch('https://www.paytr.com/odeme/api/get-token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            // Сохраняем заказ во временное хранилище
+            localStorage.setItem(`pending_order_${order.id}`, JSON.stringify(order));
+            // Перенаправляем на страницу оплаты
+            window.location.href = result.secure_url;
+        } else {
+            showToast('Ошибка оплаты: ' + result.reason);
+            return false;
+        }
+    } catch(e) {
+        showToast('Ошибка подключения к платёжной системе');
+        return false;
+    }
+}
+
+// Вспомогательная функция для получения IP
+async function getUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch(e) {
+        return '127.0.0.1';
+    }
+}
+
+// SHA256 хеш для подписи PayTR
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Обновляем функцию оформления заказа
+async function submitOrder() {
+    const name = localStorage.getItem('userName') || '';
+    const phone = localStorage.getItem('userPhone') || '';
+    
+    if (!name || !phone) {
+        showToast(translations[currentLang].fill_name_phone);
+        return false;
+    }
+    
+    const address = document.getElementById('address').value;
+    if (!address) {
+        showToast(translations[currentLang].fill_address);
+        return false;
+    }
+    
+    const order = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+        address: address,
+        service: document.querySelector('input[name="service"]:checked').parentElement.querySelector('strong').innerText,
+        extras: getExtras(),
+        orderDate: document.getElementById('date').value || new Date().toISOString().split('T')[0],
+        orderTime: document.getElementById('time').options[document.getElementById('time').selectedIndex].text,
+        total: calculateTotal(),
+        status: 'Ожидает оплаты',
+        userName: name,
+        userPhone: phone,
+        userEmail: localStorage.getItem('userEmail') || '',
+        paymentMethod: document.querySelector('input[name="payment"]:checked').value
+    };
+    
+    // Если наличные - сразу сохраняем
+    if (order.paymentMethod === 'cash') {
+        order.status = 'Ожидает подтверждения';
+        saveOrderToLocal(order);
+        showToast(translations[currentLang].order_confirmed);
+        sendToTelegram(order);
+        clearForm();
+        return true;
+    }
+    
+    // Если карта - идём в оплату
+    await processPayment(order);
+}
+
+function saveOrderToLocal(order) {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.unshift(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    loadHistory();
+}
+
+function clearForm() {
+    document.getElementById('address').value = '';
+    document.getElementById('extra_ac').checked = false;
+    document.getElementById('extra_window').checked = false;
+    document.getElementById('extra_fridge').checked = false;
+    document.getElementById('date').value = '';
+}
+
+// Обновляем слушатель кнопки
+document.addEventListener('DOMContentLoaded', () => {
+    // существующий код...
+    document.getElementById('orderBtn').addEventListener('click', submitOrder);
+});
