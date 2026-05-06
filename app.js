@@ -73,11 +73,11 @@ const translations = {
 
 let currentLang = 'ru';
 
-// ========== ТЕЛЕГРАМ НАСТРОЙКИ (ГОТОВО) ==========
-const BOT_TOKEN = '8776328263:AAHez7565yh4XyI8stLj6efM0P9QGMAvGH8';
+// ========== ТЕЛЕГРАМ НАСТРОЙКИ (ИСПРАВЛЕНО) ==========
+const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
 const CHAT_ID = '897174464';
 
-// ========== РАСЧЁТ ЦЕНЫ ==========
+// ========== РАСЧЁТ ЦЕНЫ (ИСПРАВЛЕНО) ==========
 function calculateTotal() {
     let total = 0;
     const selectedService = document.querySelector('input[name="service"]:checked');
@@ -100,7 +100,7 @@ function calculateTotal() {
     return total;
 }
 
-// ========== ПОЛУЧИТЬ ТЕКСТ УСЛУГИ ==========
+// ========== ПОЛУЧИТЬ ТЕКСТ УСЛУГИ (ИСПРАВЛЕНО) ==========
 function getSelectedServiceText() {
     const selected = document.querySelector('input[name="service"]:checked');
     if (!selected) return 'Стандартная';
@@ -137,7 +137,7 @@ function clearForm() {
     }
 }
 
-// ========== ОТПРАВКА В ТЕЛЕГРАМ ==========
+// ========== ОТПРАВКА В ТЕЛЕГРАМ (ИСПРАВЛЕНО) ==========
 function sendToTelegram(order) {
     const message = `🚨 НОВЫЙ ЗАКАЗ SUP TEMIZ!
 ━━━━━━━━━━━━━━━━━━━━━
