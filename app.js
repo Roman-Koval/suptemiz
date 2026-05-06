@@ -18,11 +18,10 @@ const translations = {
         date_title: "Дата и время",
         total_title: "Итого:",
         no_orders: "У вас пока нет заказов",
-        order_confirmed: "✅ Заказ подтверждён! Мы свяжемся с вами в ближайшее время.",
+        order_confirmed: "✅ Заказ подтверждён! Мы свяжемся с вами",
         profile_saved: "✅ Профиль сохранён!",
         fill_name_phone: "Пожалуйста, заполните имя и телефон",
-        fill_address: "Пожалуйста, укажите адрес",
-        no_orders_history: "Нет заказов"
+        fill_address: "Пожалуйста, укажите адрес"
     },
     en: {
         promo: "🎉 First cleaning 20% off",
@@ -36,17 +35,16 @@ const translations = {
         service_after: "After renovation",
         service_office: "Office",
         extras_title: "Extras",
-        extra_ac: "AC cleaning (up to 2 units)",
-        extra_window: "Window cleaning (up to 6)",
+        extra_ac: "AC cleaning",
+        extra_window: "Window cleaning",
         extra_fridge: "Fridge cleaning",
         date_title: "Date & time",
         total_title: "Total:",
         no_orders: "No orders yet",
-        order_confirmed: "✅ Order confirmed! We'll contact you soon.",
+        order_confirmed: "✅ Order confirmed! We'll contact you",
         profile_saved: "✅ Profile saved!",
-        fill_name_phone: "Please fill in name and phone",
-        fill_address: "Please enter your address",
-        no_orders_history: "No orders"
+        fill_name_phone: "Please fill name and phone",
+        fill_address: "Please enter address"
     },
     tr: {
         promo: "🎉 İlk temizlikte %20 indirim",
@@ -60,17 +58,16 @@ const translations = {
         service_after: "Tadilat sonrası",
         service_office: "Ofis",
         extras_title: "Ekstralar",
-        extra_ac: "Klima temizliği (2'ye kadar)",
-        extra_window: "Cam temizliği (6'ya kadar)",
+        extra_ac: "Klima temizliği",
+        extra_window: "Cam temizliği",
         extra_fridge: "Buzdolabı temizliği",
         date_title: "Tarih ve saat",
         total_title: "Toplam:",
         no_orders: "Henüz sipariş yok",
-        order_confirmed: "✅ Sipariş onaylandı! En kısa sürede size ulaşacağız.",
+        order_confirmed: "✅ Sipariş onaylandı! Size ulaşacağız",
         profile_saved: "✅ Profil kaydedildi!",
         fill_name_phone: "Lütfen ad ve telefon girin",
-        fill_address: "Lütfen adres girin",
-        no_orders_history: "Sipariş yok"
+        fill_address: "Lütfen adres girin"
     }
 };
 
@@ -79,8 +76,6 @@ let currentLang = 'ru';
 // ========== РАСЧЁТ ЦЕНЫ ==========
 function calculateTotal() {
     let total = 0;
-    
-    // Выбор услуги
     const selectedService = document.querySelector('input[name="service"]:checked').value;
     const prices = {
         standard: 500,
@@ -90,26 +85,26 @@ function calculateTotal() {
     };
     total = prices[selectedService] || 500;
     
-    // Дополнительно
-    if (document.getElementById('extra_ac').checked) total += 200;
-    if (document.getElementById('extra_window').checked) total += 150;
-    if (document.getElementById('extra_fridge').checked) total += 100;
+    if (document.getElementById('extra_ac')?.checked) total += 200;
+    if (document.getElementById('extra_window')?.checked) total += 150;
+    if (document.getElementById('extra_fridge')?.checked) total += 100;
     
-    document.getElementById('totalPrice').innerHTML = total.toLocaleString('tr-TR') + ' ₺';
+    const totalEl = document.getElementById('totalPrice');
+    if (totalEl) totalEl.innerHTML = total.toLocaleString('tr-TR') + ' ₺';
     return total;
 }
 
 // ========== СОХРАНЕНИЕ ЗАКАЗА ==========
 function saveOrder() {
-    const name = localStorage.getItem('userName') || '';
-    const phone = localStorage.getItem('userPhone') || '';
+    const name = localStorage.getItem('userName') || document.getElementById('userName')?.value || '';
+    const phone = localStorage.getItem('userPhone') || document.getElementById('userPhone')?.value || '';
     
     if (!name || !phone) {
         showToast(translations[currentLang].fill_name_phone);
         return false;
     }
     
-    const address = document.getElementById('address').value;
+    const address = document.getElementById('address')?.value;
     if (!address) {
         showToast(translations[currentLang].fill_address);
         return false;
@@ -118,55 +113,64 @@ function saveOrder() {
     const order = {
         id: Date.now(),
         date: new Date().toISOString(),
-        district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+        district: document.getElementById('district')?.options[document.getElementById('district').selectedIndex]?.text || '',
         address: address,
-        service: document.querySelector('input[name="service"]:checked').parentElement.querySelector('strong').innerText,
+        service: getSelectedServiceText(),
         extras: getExtras(),
-        orderDate: document.getElementById('date').value,
-        orderTime: document.getElementById('time').options[document.getElementById('time').selectedIndex].text,
+        orderDate: document.getElementById('date')?.value || new Date().toISOString().split('T')[0],
+        orderTime: document.getElementById('time')?.options[document.getElementById('time').selectedIndex]?.text || '',
         total: calculateTotal(),
         status: 'Ожидает подтверждения',
         userName: name,
-        userPhone: phone
+        userPhone: phone,
+        userEmail: document.getElementById('userEmail')?.value || ''
     };
     
-    // Сохраняем в localStorage
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.unshift(order);
     localStorage.setItem('orders', JSON.stringify(orders));
     
-    // Отправляем в Telegram (для быстрого оповещения)
-    sendToTelegram(order);
-    
     showToast(translations[currentLang].order_confirmed);
-    
-    // Очищаем форму
-    document.getElementById('address').value = '';
-    document.getElementById('extra_ac').checked = false;
-    document.getElementById('extra_window').checked = false;
-    document.getElementById('extra_fridge').checked = false;
-    
+    sendToTelegram(order);
     loadHistory();
+    clearForm();
     return true;
+}
+
+function getSelectedServiceText() {
+    const selected = document.querySelector('input[name="service"]:checked');
+    if (!selected) return 'Стандартная';
+    const parent = selected.closest('.service-option');
+    const strong = parent?.querySelector('strong');
+    return strong ? strong.innerText : 'Стандартная';
 }
 
 function getExtras() {
     const extras = [];
-    if (document.getElementById('extra_ac').checked) extras.push('Чистка кондиционера');
-    if (document.getElementById('extra_window').checked) extras.push('Мойка окон');
-    if (document.getElementById('extra_fridge').checked) extras.push('Чистка холодильника');
+    if (document.getElementById('extra_ac')?.checked) extras.push('Чистка кондиционера');
+    if (document.getElementById('extra_window')?.checked) extras.push('Мойка окон');
+    if (document.getElementById('extra_fridge')?.checked) extras.push('Чистка холодильника');
     return extras.join(', ') || 'Нет';
 }
 
-// ========== TELEGRAM ОПОВЕЩЕНИЕ ==========
-// ВАЖНО: замените BOT_TOKEN и CHAT_ID на свои!
-const BOT_TOKEN = 'ВАШ_ТОКЕН_ТЕЛЕГРАМ_БОТА';
-const CHAT_ID = 'ВАШ_CHAT_ID';
+function clearForm() {
+    const addressInput = document.getElementById('address');
+    if (addressInput) addressInput.value = '';
+    const acCheck = document.getElementById('extra_ac');
+    const windowCheck = document.getElementById('extra_window');
+    const fridgeCheck = document.getElementById('extra_fridge');
+    if (acCheck) acCheck.checked = false;
+    if (windowCheck) windowCheck.checked = false;
+    if (fridgeCheck) fridgeCheck.checked = false;
+    const dateInput = document.getElementById('date');
+    if (dateInput) dateInput.value = '';
+}
 
-async function sendToTelegram(order) {
+// ========== TELEGRAM ==========
+function sendToTelegram(order) {
     const message = `
-🚨 НОВЫЙ ЗАКАЗ!
-━━━━━━━━━━━━━━━━
+🚨 НОВЫЙ ЗАКАЗ SUP TEMIZ!
+━━━━━━━━━━━━━━━━━━━━━
 👤 Клиент: ${order.userName}
 📞 Телефон: ${order.userPhone}
 📍 Район: ${order.district}
@@ -177,38 +181,27 @@ async function sendToTelegram(order) {
 ⏰ Время: ${order.orderTime}
 💰 Сумма: ${order.total} ₺
 🆔 ID: ${order.id}
-━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━
     `;
-    
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    
-    try {
-        await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            })
-        });
-    } catch(e) {
-        console.log('Telegram error:', e);
-    }
+    console.log('Telegram message:', message);
+    // Раскомментируйте когда получите токен бота:
+    // const BOT_TOKEN = 'ВАШ_ТОКЕН';
+    // const CHAT_ID = 'ВАШ_CHAT_ID';
+    // fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    // });
 }
 
-// ========== ИСТОРИЯ ЗАКАЗОВ ==========
+// ========== ИСТОРИЯ ==========
 function loadHistory() {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const container = document.getElementById('historyList');
+    if (!container) return;
     
     if (orders.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <span>📭</span>
-                <p data-i18n="no_orders">${translations[currentLang].no_orders}</p>
-            </div>
-        `;
+        container.innerHTML = `<div class="empty-state"><span>📭</span><p>${translations[currentLang].no_orders}</p></div>`;
         return;
     }
     
@@ -226,30 +219,72 @@ function repeatOrder(orderId) {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const order = orders.find(o => o.id === orderId);
     if (order) {
-        document.getElementById('district').value = order.district;
-        document.getElementById('address').value = order.address;
-        // Переключаем таб на заказ
-        document.querySelector('.nav-tab[data-tab="order"]').click();
+        const addressInput = document.getElementById('address');
+        if (addressInput) addressInput.value = order.address;
+        const districtSelect = document.getElementById('district');
+        if (districtSelect) {
+            for (let i = 0; i < districtSelect.options.length; i++) {
+                if (districtSelect.options[i].text === order.district) {
+                    districtSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        document.querySelector('.nav-tab[data-tab="order"]')?.click();
         showToast('Данные из прошлого заказа заполнены');
     }
 }
 
 // ========== ПРОФИЛЬ ==========
 function loadProfile() {
-    document.getElementById('userName').value = localStorage.getItem('userName') || '';
-    document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
+    const nameInput = document.getElementById('userName');
+    const phoneInput = document.getElementById('userPhone');
+    const emailInput = document.getElementById('userEmail');
+    if (nameInput) nameInput.value = localStorage.getItem('userName') || '';
+    if (phoneInput) phoneInput.value = localStorage.getItem('userPhone') || '';
+    if (emailInput) emailInput.value = localStorage.getItem('userEmail') || '';
 }
 
 function saveProfile() {
-    const name = document.getElementById('userName').value;
-    const phone = document.getElementById('userPhone').value;
+    const name = document.getElementById('userName')?.value || '';
+    const phone = document.getElementById('userPhone')?.value || '';
+    const email = document.getElementById('userEmail')?.value || '';
+    
     if (name && phone) {
         localStorage.setItem('userName', name);
         localStorage.setItem('userPhone', phone);
+        localStorage.setItem('userEmail', email);
         showToast(translations[currentLang].profile_saved);
     } else {
         showToast(translations[currentLang].fill_name_phone);
     }
+}
+
+// ========== ПЕРЕКЛЮЧЕНИЕ ТАБОВ (ГЛАВНОЕ ИСПРАВЛЕНИЕ!) ==========
+function initTabs() {
+    const tabs = document.querySelectorAll('.nav-tab');
+    const contents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            
+            // Убираем активный класс у всех табов
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Прячем все содержимое
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Показываем нужное
+            const activeContent = document.getElementById(`${tabId}-tab`);
+            if (activeContent) activeContent.classList.add('active');
+            
+            // Обновляем историю если открыли вкладку истории
+            if (tabId === 'history') loadHistory();
+            if (tabId === 'profile') loadProfile();
+        });
+    });
 }
 
 // ========== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА ==========
@@ -262,205 +297,58 @@ function setLanguage(lang) {
         }
     });
     calculateTotal();
-    loadHistory();
+    if (document.getElementById('history-tab')?.classList.contains('active')) {
+        loadHistory();
+    }
 }
 
-// ========== UI КОМПОНЕНТЫ ==========
+// ========== TOAST ==========
 function showToast(message) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     toast.textContent = message;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ========== ТАБЫ ==========
-function initTabs() {
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabId = tab.dataset.tab;
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`${tabId}-tab`).classList.add('active');
-        });
-    });
-}
-
 // ========== ИНИЦИАЛИЗАЦИЯ ==========
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('SupTemiz загружен!');
+    
     initTabs();
     loadProfile();
     loadHistory();
     calculateTotal();
     
     // Слушатели
-    document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => {
-        el.addEventListener('change', calculateTotal);
+    const serviceRadios = document.querySelectorAll('input[name="service"]');
+    serviceRadios.forEach(el => el.addEventListener('change', calculateTotal));
+    
+    const extraChecks = ['extra_ac', 'extra_window', 'extra_fridge'];
+    extraChecks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', calculateTotal);
     });
     
-    document.getElementById('orderBtn').addEventListener('click', saveOrder);
-    document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+    const orderBtn = document.getElementById('orderBtn');
+    if (orderBtn) orderBtn.addEventListener('click', saveOrder);
     
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveProfile);
+    
+    const langBtns = document.querySelectorAll('.lang-btn');
+    langBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            langBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             setLanguage(btn.dataset.lang);
         });
     });
-});
-// ========== ОНЛАЙН ОПЛАТА ЧЕРЕЗ PAYTR ==========
-// ВАЖНО: замените на свои данные после регистрации в PayTR
-const PAYTR_MERCHANT_ID = 'YOUR_MERCHANT_ID';
-const PAYTR_MERCHANT_KEY = 'YOUR_MERCHANT_KEY';
-const PAYTR_MERCHANT_SALT = 'YOUR_MERCHANT_SALT';
-
-async function processPayment(order) {
-    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
     
-    if (paymentMethod === 'cash') {
-        // Наличными - просто сохраняем заказ
-        saveOrderToLocal(order);
-        showToast(translations[currentLang].order_confirmed);
-        sendToTelegram(order);
-        return true;
+    // Устанавливаем сегодняшнюю дату в поле date
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
     }
-    
-    // Онлайн оплата через PayTR
-    showToast('🔄 Перенаправление на оплату...');
-    
-    const paymentData = {
-        merchant_id: PAYTR_MERCHANT_ID,
-        user_ip: await getUserIP(),
-        merchant_oid: order.id.toString(),
-        email: localStorage.getItem('userEmail') || '',
-        payment_amount: order.total,
-        currency: 'TRY',
-        test_mode: '1', // 1 = тестовый режим
-        non_3d: '0',
-        timeout_limit: '30',
-        lang: currentLang === 'tr' ? 'tr' : 'en',
-        success_url: window.location.origin + '/payment-success.html?order_id=' + order.id,
-        fail_url: window.location.origin + '/payment-cancel.html',
-        merchant_ok_url: window.location.origin + '/payment-success.html',
-        merchant_fail_url: window.location.origin + '/payment-cancel.html',
-        user_name: localStorage.getItem('userName') || '',
-        user_phone: localStorage.getItem('userPhone') || ''
-    };
-    
-    // Генерируем подпись
-    const hashStr = `${PAYTR_MERCHANT_ID}${paymentData.user_ip}${paymentData.merchant_oid}${paymentData.email}${paymentData.payment_amount}${paymentData.currency}${paymentData.test_mode}${paymentData.non_3d}${paymentData.timeout_limit}${PAYTR_MERCHANT_KEY}`;
-    const token = await sha256(hashStr);
-    paymentData.paytr_token = token;
-    
-    // Отправляем запрос на PayTR
-    try {
-        const response = await fetch('https://www.paytr.com/odeme/api/get-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            // Сохраняем заказ во временное хранилище
-            localStorage.setItem(`pending_order_${order.id}`, JSON.stringify(order));
-            // Перенаправляем на страницу оплаты
-            window.location.href = result.secure_url;
-        } else {
-            showToast('Ошибка оплаты: ' + result.reason);
-            return false;
-        }
-    } catch(e) {
-        showToast('Ошибка подключения к платёжной системе');
-        return false;
-    }
-}
-
-// Вспомогательная функция для получения IP
-async function getUserIP() {
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        return data.ip;
-    } catch(e) {
-        return '127.0.0.1';
-    }
-}
-
-// SHA256 хеш для подписи PayTR
-async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// Обновляем функцию оформления заказа
-async function submitOrder() {
-    const name = localStorage.getItem('userName') || '';
-    const phone = localStorage.getItem('userPhone') || '';
-    
-    if (!name || !phone) {
-        showToast(translations[currentLang].fill_name_phone);
-        return false;
-    }
-    
-    const address = document.getElementById('address').value;
-    if (!address) {
-        showToast(translations[currentLang].fill_address);
-        return false;
-    }
-    
-    const order = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-        address: address,
-        service: document.querySelector('input[name="service"]:checked').parentElement.querySelector('strong').innerText,
-        extras: getExtras(),
-        orderDate: document.getElementById('date').value || new Date().toISOString().split('T')[0],
-        orderTime: document.getElementById('time').options[document.getElementById('time').selectedIndex].text,
-        total: calculateTotal(),
-        status: 'Ожидает оплаты',
-        userName: name,
-        userPhone: phone,
-        userEmail: localStorage.getItem('userEmail') || '',
-        paymentMethod: document.querySelector('input[name="payment"]:checked').value
-    };
-    
-    // Если наличные - сразу сохраняем
-    if (order.paymentMethod === 'cash') {
-        order.status = 'Ожидает подтверждения';
-        saveOrderToLocal(order);
-        showToast(translations[currentLang].order_confirmed);
-        sendToTelegram(order);
-        clearForm();
-        return true;
-    }
-    
-    // Если карта - идём в оплату
-    await processPayment(order);
-}
-
-function saveOrderToLocal(order) {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.unshift(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    loadHistory();
-}
-
-function clearForm() {
-    document.getElementById('address').value = '';
-    document.getElementById('extra_ac').checked = false;
-    document.getElementById('extra_window').checked = false;
-    document.getElementById('extra_fridge').checked = false;
-    document.getElementById('date').value = '';
-}
-
-// Обновляем слушатель кнопки
-document.addEventListener('DOMContentLoaded', () => {
-    // существующий код...
-    document.getElementById('orderBtn').addEventListener('click', submitOrder);
 });
