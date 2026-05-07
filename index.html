@@ -27,6 +27,12 @@
         }
         .logo { font-size: 24px; font-weight: 700; }
         .accent { color: #2E7D32; }
+        .role-badge {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
         .lang-switcher { display: flex; gap: 8px; }
         .lang-btn {
             background: none;
@@ -76,6 +82,7 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             margin-top: 8px;
+            font-size: 16px;
         }
         .service-option {
             display: flex;
@@ -87,8 +94,10 @@
             cursor: pointer;
         }
         .service-option input { margin-right: 12px; }
-        .price { float: right; color: #2E7D32; font-weight: 700; }
-        .extra-option { display: block; padding: 10px 0; cursor: pointer; }
+        .price { margin-left: auto; color: #2E7D32; font-weight: 700; }
+        .extra-option { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
+        .extra-option input { margin-right: 12px; }
+        .extra-option .price { margin-left: auto; }
         .btn-primary {
             width: 100%;
             padding: 16px;
@@ -110,16 +119,48 @@
             border-radius: 12px;
             cursor: pointer;
         }
+        .btn-small {
+            padding: 6px 12px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
         .history-item {
             background: white;
             padding: 16px;
             border-radius: 12px;
             margin-bottom: 12px;
+            position: relative;
         }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        .status-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .status-btn:active { transform: scale(0.95); }
         .empty-state { text-align: center; padding: 48px; color: #999; }
         .avatar { font-size: 64px; text-align: center; margin-bottom: 20px; }
         
-        /* Модальное окно регистрации */
         .modal {
             display: none;
             position: fixed;
@@ -136,18 +177,19 @@
         .modal-content {
             background: white;
             border-radius: 24px;
-            padding: 24px;
-            max-width: 320px;
+            padding: 28px;
+            max-width: 340px;
             width: 90%;
             text-align: center;
         }
-        .modal-content h3 { margin-bottom: 16px; color: #2E7D32; }
+        .modal-content h3 { margin-bottom: 12px; color: #2E7D32; }
         .modal-content input {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
+            padding: 14px;
+            margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 12px;
+            font-size: 16px;
         }
         .modal-content button {
             width: 100%;
@@ -156,13 +198,11 @@
             color: white;
             border: none;
             border-radius: 12px;
-            margin-top: 16px;
+            margin-top: 12px;
+            font-size: 16px;
             cursor: pointer;
         }
-        .modal-close {
-            margin-top: 12px;
-            background: #999 !important;
-        }
+        .modal-close { background: #999 !important; }
         .toast-message {
             position: fixed;
             bottom: 100px;
@@ -176,14 +216,58 @@
             transition: opacity 0.3s;
             pointer-events: none;
             z-index: 1000;
+            font-size: 14px;
         }
         .toast-message.show { opacity: 1; }
+        
+        /* Админ панель */
+        .admin-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 200;
+        }
+        .admin-order-item {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .role-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+        }
+        .role-btn.active {
+            background: #2E7D32;
+            color: white;
+            border-color: #2E7D32;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
+            <div>
+                <span class="role-badge" id="roleBadge">👤 Клиент</span>
+            </div>
             <div class="lang-switcher">
                 <button class="lang-btn active" data-lang="ru">RU</button>
                 <button class="lang-btn" data-lang="en">EN</button>
@@ -263,7 +347,7 @@
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
             <div class="card">
-                <h4>📞 Контакты</h4>
+                <h4>📞 Контакты поддержки</h4>
                 <p>WhatsApp: +90 533 888 88 88</p>
                 <p>Telegram: @suptemiz_bot</p>
             </div>
@@ -278,18 +362,57 @@
             <input type="text" id="modalName" placeholder="Ваше имя">
             <input type="tel" id="modalPhone" placeholder="Телефон">
             <button id="modalSaveBtn">Сохранить и продолжить</button>
-            <button class="modal-close" id="modalCloseBtn">Отмена</button>
+            <button id="modalCloseBtn" class="modal-close">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Админ панель -->
+    <div id="adminFab" class="admin-fab" style="display: none;">
+        <span style="font-size: 24px;">🔧</span>
+    </div>
+    
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <h3>🔧 Админ панель</h3>
+            <div class="role-selector">
+                <button class="role-btn active" data-role="admin">👑 Админ</button>
+                <button class="role-btn" data-role="cleaner">🧹 Клинер</button>
+            </div>
+            <div id="adminOrdersList"></div>
+            <button id="closeAdminBtn" class="modal-close">Закрыть</button>
         </div>
     </div>
 
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // Telegram настройки
+        // ========== ТЕЛЕГРАМ НАСТРОЙКИ ==========
         const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
         const CHAT_ID = '897174464';
+        
+        let currentRole = 'client';
+        let currentUserPhone = '';
 
-        let pendingOrder = null; // Для временного хранения заказа
+        // ========== СТАТУСЫ И РОЛИ ==========
+        const statuses = {
+            client: [
+                { value: 'Ожидает подтверждения', label: '⏳ Ожидает', color: '#999', allowed: ['admin', 'client'] },
+                { value: 'Отменён клиентом', label: '❌ Отменён', color: '#f44336', allowed: ['client'] }
+            ],
+            admin: [
+                { value: 'Подтверждён', label: '✅ Подтверждён', color: '#2196F3', allowed: ['admin'] },
+                { value: 'Назначен клинер', label: '👨‍🔧 Назначен клинер', color: '#9C27B0', allowed: ['admin'] }
+            ],
+            cleaner: [
+                { value: 'Клинер выехал', label: '🚗 Выехал к вам', color: '#FF9800', allowed: ['cleaner'] },
+                { value: 'Уборка началась', label: '🧹 Уборка началась', color: '#FF5722', allowed: ['cleaner'] },
+                { value: 'Уборка завершена', label: '✅ Уборка завершена', color: '#4CAF50', allowed: ['cleaner'] }
+            ],
+            final: [
+                { value: 'Завершён', label: '⭐ Завершён', color: '#2E7D32', allowed: ['admin'] },
+                { value: 'Отменён администратором', label: '❌ Отменён', color: '#f44336', allowed: ['admin'] }
+            ]
+        };
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -307,8 +430,51 @@
             if (document.getElementById('extra_ac').checked) total += 200;
             if (document.getElementById('extra_window').checked) total += 150;
             if (document.getElementById('extra_fridge').checked) total += 100;
-            document.getElementById('totalPrice').innerText = total + ' ₺';
+            document.getElementById('totalPrice').innerHTML = total + ' ₺';
             return total;
+        }
+
+        function sendTelegramMessage(text) {
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+            }).catch(e => console.log('Ошибка:', e));
+        }
+
+        function sendStatusUpdate(order, oldStatus, newStatus, updatedBy) {
+            const message = `📢 ОБНОВЛЕНИЕ СТАТУСА ЗАКАЗА!
+━━━━━━━━━━━━━━━━━━━━━
+🆔 Заказ #${order.id}
+👤 Клиент: ${order.userName}
+📞 Телефон: ${order.userPhone}
+📍 Адрес: ${order.address}
+🧹 Услуга: ${order.service}
+💰 Сумма: ${order.total} ₺
+━━━━━━━━━━━━━━━━━━━━━
+📌 Старый статус: ${oldStatus}
+✨ Новый статус: ${newStatus}
+👨‍💼 Обновил: ${updatedBy}
+━━━━━━━━━━━━━━━━━━━━━
+⏰ ${new Date().toLocaleString('ru-RU')}`;
+            
+            sendTelegramMessage(message);
+        }
+
+        function getSelectedServiceText() {
+            const selected = document.querySelector('input[name="service"]:checked');
+            if (selected.value === 'standard') return 'Стандартная';
+            if (selected.value === 'general') return 'Генеральная';
+            if (selected.value === 'after_repair') return 'После ремонта';
+            return 'Офисная';
+        }
+
+        function getExtras() {
+            const extras = [];
+            if (document.getElementById('extra_ac').checked) extras.push('Кондиционер');
+            if (document.getElementById('extra_window').checked) extras.push('Окна');
+            if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
+            return extras.join(', ') || 'Нет';
         }
 
         function showRegisterModal(callback) {
@@ -321,10 +487,7 @@
             
             modal.classList.add('active');
             
-            const saveBtn = document.getElementById('modalSaveBtn');
-            const closeBtn = document.getElementById('modalCloseBtn');
-            
-            const handler = () => {
+            const saveHandler = () => {
                 const name = modalName.value.trim();
                 const phone = modalPhone.value.trim();
                 if (name && phone) {
@@ -337,14 +500,8 @@
                 }
             };
             
-            const closeHandler = () => {
-                modal.classList.remove('active');
-                saveBtn.removeEventListener('click', handler);
-                closeBtn.removeEventListener('click', closeHandler);
-            };
-            
-            saveBtn.onclick = handler;
-            closeBtn.onclick = closeHandler;
+            document.getElementById('modalSaveBtn').onclick = saveHandler;
+            document.getElementById('modalCloseBtn').onclick = () => modal.classList.remove('active');
         }
 
         function saveOrder() {
@@ -358,92 +515,227 @@
             }
             
             if (!name || !phone) {
-                // Показываем форму регистрации
-                showRegisterModal(() => {
-                    saveOrder(); // повторяем попытку после сохранения
-                });
+                showRegisterModal(() => saveOrder());
                 return;
             }
+            
+            const districtSelect = document.getElementById('district');
+            const timeSelect = document.getElementById('time');
             
             const order = {
                 id: Date.now(),
                 date: new Date().toISOString(),
                 address: address,
-                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-                service: document.querySelector('input[name="service"]:checked').parentElement.innerText.split('₺')[0].trim(),
+                district: districtSelect.options[districtSelect.selectedIndex].text,
+                service: getSelectedServiceText(),
                 extras: getExtras(),
                 orderDate: document.getElementById('date').value,
-                orderTime: document.getElementById('time').value,
+                orderTime: timeSelect.options[timeSelect.selectedIndex].text,
                 total: calculateTotal(),
                 status: 'Ожидает подтверждения',
                 userName: name,
-                userPhone: phone
+                userPhone: phone,
+                statusHistory: [{ status: 'Ожидает подтверждения', date: new Date().toISOString(), by: name }]
             };
             
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             orders.unshift(order);
             localStorage.setItem('orders', JSON.stringify(orders));
             
-            // Отправка в Telegram
-            const msg = `🚨 НОВЫЙ ЗАКАЗ SupTemiz!
+            const message = `🚨 НОВЫЙ ЗАКАЗ SupTemiz!
 ━━━━━━━━━━━━━━━━━━━━━
-👤 ${order.userName}
-📞 ${order.userPhone}
+👤 Клиент: ${order.userName}
+📞 Телефон: ${order.userPhone}
 📍 ${order.district}
 🏠 ${order.address}
 🧹 ${order.service}
 ✨ ${order.extras}
+📅 ${order.orderDate} ${order.orderTime}
 💰 ${order.total} ₺
 ━━━━━━━━━━━━━━━━━━━━━`;
             
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`)
-                .catch(e => console.log('Telegram error:', e));
-            
+            sendTelegramMessage(message);
             showToast('✅ Заказ оформлен!');
             loadHistory();
             
-            // Очистка формы
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
             document.getElementById('extra_fridge').checked = false;
         }
 
-        function getExtras() {
-            const extras = [];
-            if (document.getElementById('extra_ac').checked) extras.push('Кондиционер');
-            if (document.getElementById('extra_window').checked) extras.push('Окна');
-            if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
-            return extras.join(', ') || 'Нет';
+        function updateOrderStatus(orderId, newStatus, updatedBy) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            
+            if (orderIndex !== -1) {
+                const oldStatus = orders[orderIndex].status;
+                orders[orderIndex].status = newStatus;
+                if (!orders[orderIndex].statusHistory) orders[orderIndex].statusHistory = [];
+                orders[orderIndex].statusHistory.unshift({ status: newStatus, date: new Date().toISOString(), by: updatedBy });
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                sendStatusUpdate(orders[orderIndex], oldStatus, newStatus, updatedBy);
+                showToast(`Статус изменён на "${newStatus}"`);
+                loadHistory();
+                
+                if (document.getElementById('adminModal').style.display === 'flex') {
+                    loadAdminOrders();
+                }
+            }
         }
 
         function loadHistory() {
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const userPhone = localStorage.getItem('userPhone');
+            const userOrders = orders.filter(o => o.userPhone === userPhone);
             const container = document.getElementById('historyList');
-            if (orders.length === 0) {
+            
+            if (userOrders.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
                 return;
             }
-            container.innerHTML = orders.map(o => `
-                <div class="history-item">
-                    <strong>${new Date(o.date).toLocaleDateString()}</strong><br>
-                    ${o.service} • ${o.total} ₺<br>
-                    <small>${o.address} • ${o.status}</small>
-                </div>
-            `).join('');
+            
+            container.innerHTML = userOrders.map(order => {
+                const statusConfig = getStatusConfig(order.status);
+                const availableActions = getAvailableActions(order.status, currentRole, order.userPhone);
+                
+                return `
+                    <div class="history-item">
+                        <strong>${new Date(order.date).toLocaleDateString()}</strong>
+                        <span style="float: right;">${order.total} ₺</span><br>
+                        ${order.service}<br>
+                        <small>${order.address}</small><br>
+                        <span class="status-badge" style="background: ${statusConfig.color}; color: white;">
+                            ${statusConfig.label}
+                        </span>
+                        ${availableActions.length > 0 ? `
+                            <div class="status-actions">
+                                ${availableActions.map(action => `
+                                    <button class="status-btn" style="background: ${action.color}; color: white;" onclick="updateOrderStatus(${order.id}, '${action.value}', '${currentRole === 'client' ? order.userName : (currentRole === 'admin' ? 'Администратор' : 'Клинер')}')">
+                                        ${action.label}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        ${order.statusHistory && order.statusHistory.length > 0 ? `
+                            <details style="margin-top: 12px;">
+                                <summary style="font-size: 12px; color: #666; cursor: pointer;">📋 История статусов</summary>
+                                <div style="margin-top: 8px; font-size: 11px; color: #888;">
+                                    ${order.statusHistory.map(h => `
+                                        <div>• ${getStatusLabel(h.status)} — ${new Date(h.date).toLocaleString()} (${h.by})</div>
+                                    `).join('')}
+                                </div>
+                            </details>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusConfig(status) {
+            for (const group of Object.values(statuses)) {
+                const found = group.find(s => s.value === status);
+                if (found) return found;
+            }
+            return { label: status, color: '#999' };
+        }
+
+        function getStatusLabel(status) {
+            for (const group of Object.values(statuses)) {
+                const found = group.find(s => s.value === status);
+                if (found) return found.label;
+            }
+            return status;
+        }
+
+        function getAvailableActions(currentStatus, role, orderUserPhone) {
+            const actions = [];
+            const currentUserPhone = localStorage.getItem('userPhone');
+            
+            if (role === 'client' && currentUserPhone !== orderUserPhone) return actions;
+            
+            for (const group of Object.values(statuses)) {
+                for (const status of group) {
+                    if (status.allowed.includes(role) && status.value !== currentStatus) {
+                        actions.push(status);
+                    }
+                }
+            }
+            return actions;
+        }
+
+        function loadAdminOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const container = document.getElementById('adminOrdersList');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<p>Нет заказов</p>';
+                return;
+            }
+            
+            container.innerHTML = orders.map(order => {
+                const availableActions = getAvailableActions(order.status, currentRole, order.userPhone);
+                
+                return `
+                    <div class="admin-order-item">
+                        <div><strong>${order.userName}</strong> | ${order.userPhone}</div>
+                        <div>${order.service} | ${order.total} ₺</div>
+                        <div><small>${order.address}</small></div>
+                        <div style="margin-top: 8px;">
+                            <span class="status-badge" style="background: ${getStatusConfig(order.status).color}; color: white;">
+                                ${getStatusConfig(order.status).label}
+                            </span>
+                        </div>
+                        ${availableActions.length > 0 ? `
+                            <div class="status-actions" style="margin-top: 8px;">
+                                ${availableActions.map(action => `
+                                    <button class="status-btn" style="background: ${action.color}; color: white;" onclick="updateOrderStatus(${order.id}, '${action.value}', '${currentRole === 'admin' ? 'Администратор' : 'Клинер'}')">
+                                        ${action.label}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadProfile() {
             document.getElementById('userName').value = localStorage.getItem('userName') || '';
             document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
             document.getElementById('userEmail').value = localStorage.getItem('userEmail') || '';
+            currentUserPhone = localStorage.getItem('userPhone') || '';
+            checkRole();
         }
 
         function saveProfile() {
             localStorage.setItem('userName', document.getElementById('userName').value);
             localStorage.setItem('userPhone', document.getElementById('userPhone').value);
             localStorage.setItem('userEmail', document.getElementById('userEmail').value);
+            currentUserPhone = localStorage.getItem('userPhone') || '';
+            checkRole();
             showToast('✅ Профиль сохранён!');
+        }
+
+        function checkRole() {
+            const userPhone = localStorage.getItem('userPhone');
+            const isAdmin = userPhone === '0852159181' || userPhone === '+905338888888';
+            const isCleaner = userPhone === '05331234567' || userPhone === '+905331234567';
+            
+            if (isAdmin) {
+                currentRole = 'admin';
+                document.getElementById('roleBadge').innerHTML = '👑 Администратор';
+                document.getElementById('adminFab').style.display = 'flex';
+            } else if (isCleaner) {
+                currentRole = 'cleaner';
+                document.getElementById('roleBadge').innerHTML = '🧹 Клинер';
+                document.getElementById('adminFab').style.display = 'flex';
+            } else {
+                currentRole = 'client';
+                document.getElementById('roleBadge').innerHTML = '👤 Клиент';
+                document.getElementById('adminFab').style.display = 'none';
+            }
         }
 
         // Вкладки
@@ -458,14 +750,30 @@
             };
         });
 
-        // Слушатели
+        // Админ панель
+        document.getElementById('adminFab')?.addEventListener('click', () => {
+            loadAdminOrders();
+            document.getElementById('adminModal').style.display = 'flex';
+        });
+        document.getElementById('closeAdminBtn')?.addEventListener('click', () => {
+            document.getElementById('adminModal').style.display = 'none';
+        });
+        
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentRole = btn.dataset.role;
+                loadAdminOrders();
+            };
+        });
+
         document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => {
             el.onchange = calculateTotal;
         });
         document.getElementById('orderBtn').onclick = saveOrder;
         document.getElementById('saveProfileBtn').onclick = saveProfile;
         
-        // Инициализация
         calculateTotal();
         loadHistory();
         loadProfile();
