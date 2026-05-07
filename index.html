@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#2E7D32">
+    <meta name="theme-color" content="#22c55e">
     <title>SupTemiz — Клининг Северного Кипра</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -27,43 +27,53 @@
             </div>
         </header>
 
-        <div class="promo-banner glass">🎉 Первая уборка — скидка 25% для новых клиентов!</div>
+        <div class="promo-banner glass">🎉 Первая уборка — 25% скидка новым клиентам!</div>
+        <div class="sync-status" id="syncStatus">🟢 Работает онлайн</div>
 
         <nav class="bottom-nav glass">
-            <button class="nav-btn active" data-tab="order">📋<span>Заказ</span></button>
-            <button class="nav-btn" data-tab="history">📜<span>История</span></button>
-            <button class="nav-btn" data-tab="profile">👤<span>Профиль</span></button>
+            <button class="nav-btn active" data-tab="order">📋<span data-i18n="nav_order">Заказ</span></button>
+            <button class="nav-btn" data-tab="history">📜<span data-i18n="nav_history">История</span></button>
+            <button class="nav-btn" data-tab="profile">👤<span data-i18n="nav_profile">Профиль</span></button>
         </nav>
 
-        <!-- TAB: ORDER -->
+        <!-- ORDER TAB -->
         <div id="order-tab" class="tab-content active">
+            <!-- District -->
             <div class="card glass">
-                <h3 data-lang="district">📍 Ваш район</h3>
+                <h3 data-i18n="location_title">📍 Ваш район</h3>
                 <select id="district" class="input"></select>
-                <input type="text" id="address" class="input" placeholder="Полный адрес">
+                <input type="text" id="address" class="input" placeholder="Улица, дом, квартира">
             </div>
 
+            <!-- Rooms + Area -->
             <div class="card glass">
-                <h3 data-lang="rooms">🏠 Количество комнат + площадь</h3>
+                <h3>🏠 Комнаты и площадь</h3>
                 <div class="flex-row">
-                    <select id="rooms" class="input"></select>
-                    <input type="number" id="area" class="input" placeholder="м²" min="30">
+                    <select id="rooms" class="input">
+                        <option value="1">1 комната</option>
+                        <option value="2" selected>2 комнаты</option>
+                        <option value="3">3 комнаты</option>
+                        <option value="4">4+ комнаты</option>
+                    </select>
+                    <input type="number" id="area" class="input" placeholder="м²" min="30" value="80">
                 </div>
             </div>
 
+            <!-- Service Type -->
             <div class="card glass">
-                <h3 data-lang="service_type">🧹 Тип уборки</h3>
-                <!-- service options with radio -->
-                <div id="serviceOptions" class="grid-options"></div>
+                <h3 data-i18n="service_title">🧹 Тип уборки</h3>
+                <div id="serviceGrid" class="grid-options"></div>
             </div>
 
+            <!-- Extras -->
             <div class="card glass">
-                <h3 data-lang="extras">✨ Дополнительные услуги</h3>
-                <div id="extrasContainer" class="extras-grid"></div>
+                <h3 data-i18n="extras_title">✨ Дополнительно</h3>
+                <div id="extrasContainer"></div>
             </div>
 
+            <!-- Date & Time -->
             <div class="card glass">
-                <h3 data-lang="datetime">📅 Дата и время</h3>
+                <h3 data-i18n="date_title">📅 Дата и время</h3>
                 <input type="date" id="date" class="input">
                 <select id="time" class="input"></select>
             </div>
@@ -74,19 +84,25 @@
             </div>
         </div>
 
-        <!-- TAB: HISTORY -->
+        <!-- HISTORY TAB -->
         <div id="history-tab" class="tab-content">
-            <div id="historyList" class="list-container"></div>
+            <div id="historyList" class="history-list"></div>
         </div>
 
-        <!-- TAB: PROFILE -->
+        <!-- PROFILE TAB -->
         <div id="profile-tab" class="tab-content">
-            <!-- Profile card + admin button -->
+            <div class="card glass">
+                <div class="avatar">👤</div>
+                <input type="text" id="userName" class="input" placeholder="Имя">
+                <input type="tel" id="userPhone" class="input" placeholder="+90 ___ ___ __ __">
+                <input type="email" id="userEmail" class="input" placeholder="Email (опционально)">
+                <button id="saveProfileBtn" class="btn-primary">💾 Сохранить профиль</button>
+            </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
-    <div id="adminPanel" class="modal">...</div>
+    <div id="adminFab" class="admin-fab">🔧</div>
 
     <script src="app.js" defer></script>
 </body>
