@@ -74,7 +74,7 @@ const translations = {
 let currentLang = 'ru';
 
 // ========== ТЕЛЕГРАМ НАСТРОЙКИ (ИСПРАВЛЕНО) ==========
-const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
+const BOT_TOKEN = '8776328263:AAFW4TPDyi1CwnbprZ-S1I2Mj9bXUDL0vv8';
 const CHAT_ID = '897174464';
 
 // ========== РАСЧЁТ ЦЕНЫ (ИСПРАВЛЕНО) ==========
