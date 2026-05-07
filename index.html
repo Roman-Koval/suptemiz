@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SupTemiz - Клининг</title>
+    <title>SupTemiz - Клининг Северный Кипр</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding-bottom: 80px; }
-        .app-container { max-width: 500px; margin: 0 auto; background: #f5f5f5; min-height: 100vh; }
-        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; }
-        .logo { font-size: 22px; font-weight: 700; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f0f2f5; padding-bottom: 80px; }
+        .app-container { max-width: 500px; margin: 0 auto; background: #f0f2f5; min-height: 100vh; }
+        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 700; }
         .accent { color: #2E7D32; }
-        .role-badge { background: #f0f0f0; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-        .promo-banner { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 10px 16px; margin: 12px; border-radius: 12px; font-size: 14px; }
+        .role-badge { background: #e8f5e9; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .promo-banner { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 12px 16px; margin: 12px; border-radius: 12px; font-size: 14px; font-weight: 500; }
         .main-nav { display: flex; background: white; margin: 12px; border-radius: 16px; padding: 4px; gap: 4px; }
         .nav-tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; cursor: pointer; font-weight: 500; }
         .nav-tab.active { background: #2E7D32; color: white; }
         .tab-content { display: none; padding: 0 12px; }
         .tab-content.active { display: block; }
-        .card { background: white; margin: 12px 0; padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card { background: white; margin: 12px 0; padding: 18px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .form-select, .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-top: 8px; font-size: 16px; }
         .service-option { display: flex; align-items: center; padding: 12px; margin: 8px 0; background: #f9f9f9; border-radius: 12px; cursor: pointer; }
         .service-option input { margin-right: 12px; }
@@ -26,7 +26,7 @@
         .extra-option { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
         .extra-option input { margin-right: 12px; }
         .btn-primary { width: 100%; padding: 16px; background: #2E7D32; color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; margin: 12px 0; }
-        .btn-secondary { width: 100%; padding: 12px; background: #e0e0e0; border: none; border-radius: 12px; cursor: pointer; }
+        .btn-secondary { width: 100%; padding: 12px; background: #e0e0e0; border: none; border-radius: 12px; cursor: pointer; font-weight: 500; }
         .btn-small { padding: 6px 12px; background: #2E7D32; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 4px; font-size: 12px; }
         .history-item { background: white; padding: 16px; border-radius: 12px; margin-bottom: 12px; }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-top: 8px; color: white; }
@@ -36,15 +36,17 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: white; border-radius: 24px; padding: 28px; max-width: 340px; width: 90%; text-align: center; }
-        .modal-content input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; }
+        .modal-content input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; }
         .modal-content button { width: 100%; padding: 12px; background: #2E7D32; color: white; border: none; border-radius: 12px; margin-top: 8px; cursor: pointer; }
         .modal-close { background: #999 !important; }
         .toast-message { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 40px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; font-size: 14px; }
         .toast-message.show { opacity: 1; }
-        .admin-fab { position: fixed; bottom: 20px; right: 20px; background: #333; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 200; font-size: 24px; }
-        .admin-order-item { border-bottom: 1px solid #ddd; padding: 12px; margin-bottom: 8px; }
-        .sync-status { font-size: 11px; color: #666; text-align: center; padding: 4px; background: #f0f0f0; margin: 8px; border-radius: 20px; }
-        .refresh-btn { background: #2E7D32; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
+        .admin-fab { position: fixed; bottom: 20px; right: 20px; background: #2E7D32; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 200; font-size: 24px; color: white; }
+        .admin-order-item { border-bottom: 1px solid #eee; padding: 12px; margin-bottom: 8px; }
+        .sync-status { font-size: 12px; text-align: center; padding: 6px; background: #fff3e0; margin: 8px; border-radius: 20px; }
+        .refresh-btn { background: #2E7D32; color: white; border: none; border-radius: 20px; padding: 3px 10px; font-size: 11px; cursor: pointer; margin-left: 8px; }
+        .order-id { font-size: 11px; color: #999; margin-top: 4px; }
+        h3 { font-size: 16px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -55,10 +57,10 @@
         </header>
 
         <div class="promo-banner">🎉 Первая уборка со скидкой 20%</div>
-        
+
         <div class="sync-status" id="syncStatus">
-            🔄 Загрузка... 
-            <button class="refresh-btn" onclick="syncOrders()">Обновить</button>
+            🔄 Загрузка...
+            <button class="refresh-btn" onclick="syncFromCloud()">Обновить</button>
         </div>
 
         <nav class="main-nav">
@@ -67,7 +69,6 @@
             <button class="nav-tab" data-tab="profile">👤 Профиль</button>
         </nav>
 
-        <!-- Заказ -->
         <div id="order-tab" class="tab-content active">
             <div class="card">
                 <h3>📍 Ваш район</h3>
@@ -109,133 +110,136 @@
             <button class="btn-primary" id="orderBtn">📞 Оформить заказ</button>
         </div>
 
-        <!-- История -->
         <div id="history-tab" class="tab-content"><div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div></div>
 
-        <!-- Профиль -->
         <div id="profile-tab" class="tab-content">
             <div class="card"><div class="avatar">👤</div>
                 <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
-                <input type="tel" id="userPhone" placeholder="Телефон" class="form-input">
-                <input type="email" id="userEmail" placeholder="Email" class="form-input">
+                <input type="tel" id="userPhone" placeholder="Телефон (например, 0533 123 45 67)" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
-            <div class="card"><h4>📞 Контакты</h4>
+            <div class="card"><h4>📞 Контакты поддержки</h4>
                 <p>WhatsApp: +90 533 888 88 88</p>
                 <p>Telegram: @suptemiz_bot</p>
             </div>
         </div>
     </div>
 
-    <!-- Регистрация -->
-    <div id="registerModal" class="modal"><div class="modal-content"><h3>📝 Заполните профиль</h3>
-        <p style="margin-bottom:12px; color:#666;">Для заказа нужны ваши контакты</p>
-        <input type="text" id="modalName" placeholder="Ваше имя">
-        <input type="tel" id="modalPhone" placeholder="Телефон">
-        <button id="modalSaveBtn">Сохранить и продолжить</button>
-        <button id="modalCloseBtn" class="modal-close">Отмена</button>
-    </div></div>
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <h3>📝 Заполните профиль</h3>
+            <p style="margin-bottom: 16px; color: #666;">Для оформления заказа нужны ваши контакты</p>
+            <input type="text" id="modalName" placeholder="Ваше имя">
+            <input type="tel" id="modalPhone" placeholder="Телефон">
+            <button id="modalSaveBtn">Сохранить и продолжить</button>
+            <button id="modalCloseBtn" class="modal-close">Отмена</button>
+        </div>
+    </div>
 
-    <!-- Админ панель -->
-    <div id="adminFab" class="admin-fab" style="display:none;">🔧</div>
-    <div id="adminModal" class="modal"><div class="modal-content" style="max-width:500px; max-height:80vh; overflow-y:auto;">
-        <h3>🔧 Управление заказами</h3>
-        <div id="adminOrdersList"></div>
-        <button id="closeAdminBtn" class="modal-close">Закрыть</button>
-    </div></div>
+    <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <h3>🔧 Управление заказами</h3>
+            <div id="adminOrdersList"></div>
+            <button id="closeAdminBtn" class="modal-close">Закрыть</button>
+        </div>
+    </div>
 
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // ========== JSONBin.io НАСТРОЙКИ ==========
-        // Бесплатное облачное хранилище для синхронизации заказов
-        const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/682c4b73ad19ca34f8f5b135';
-        const JSONBIN_SECRET = '$2a$10$9xYkWgQZ7YlQZQp9XpQ7POcRqXqXqXqXqXqXqXqXqXqXqXqXqXq';
+        // ========== GOOGLE SHEETS НАСТРОЙКА ==========
+        // ВАШ ID ТАБЛИЦЫ (скопирован из ссылки)
+        const GOOGLE_SHEET_ID = '1xCqMDGCcwz8g51WWcw8TX162wlWzrMNiCi1zlhNMNBU';
         
         let allOrders = [];
         let currentRole = 'client';
 
-        // Загрузка заказов из облака
-        async function syncOrders() {
+        // Сохранение в Google Sheets через бесплатный сервис Sheet.best
+        async function syncFromCloud() {
             document.getElementById('syncStatus').innerHTML = '🔄 Синхронизация...';
             
             try {
-                const response = await fetch(JSONBIN_URL, {
-                    headers: { 'X-Master-Key': JSONBIN_SECRET }
-                });
-                const data = await response.json();
+                // Пытаемся загрузить из Google Sheets (через JSONP обход CORS)
+                const script = document.createElement('script');
+                const callbackName = 'jsonpCallback_' + Date.now();
                 
-                if (data && data.record && data.record.orders) {
-                    allOrders = data.record.orders;
-                    localStorage.setItem('orders', JSON.stringify(allOrders));
-                    document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано с сервером 🔄';
-                } else {
-                    allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                    document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы 🔄';
-                }
+                window[callbackName] = (data) => {
+                    if (data && data.orders) {
+                        allOrders = data.orders;
+                        localStorage.setItem('orders', JSON.stringify(allOrders));
+                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано 🔄';
+                    } else {
+                        loadLocalOrders();
+                    }
+                    delete window[callbackName];
+                    document.head.removeChild(script);
+                    loadHistory();
+                    loadAdminOrders();
+                };
+                
+                script.src = `https://script.google.com/macros/s/AKfycbx9Xq4VkZxYzW3bN7cL8pQ1rS2tU3vW4xY5zA6/exec?callback=${callbackName}&sheetId=${GOOGLE_SHEET_ID}`;
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        loadLocalOrders();
+                        document.getElementById('syncStatus').innerHTML = '📋 Локальный режим 🔄';
+                        loadHistory();
+                        loadAdminOrders();
+                    }
+                }, 3000);
             } catch(e) {
                 console.log('Ошибка:', e);
-                allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим 🔄';
+                loadLocalOrders();
             }
-            
+        }
+
+        function loadLocalOrders() {
+            const saved = localStorage.getItem('orders');
+            allOrders = saved ? JSON.parse(saved) : [];
+            document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы 🔄';
             loadHistory();
             loadAdminOrders();
         }
 
-        // Сохранение заказов в облако
         async function saveToCloud() {
             try {
-                await fetch(JSONBIN_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_SECRET
-                    },
-                    body: JSON.stringify({ orders: allOrders })
+                await fetch(`https://script.google.com/macros/s/AKfycbx9Xq4VkZxYzW3bN7cL8pQ1rS2tU3vW4xY5zA6/exec`, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sheetId: GOOGLE_SHEET_ID, orders: allOrders })
                 });
-                console.log('Сохранено в облако');
-            } catch(e) {
-                console.log('Ошибка сохранения:', e);
-            }
+            } catch(e) {}
         }
 
-        // Обновление статуса
-        async function updateOrderStatus(orderId, newStatus, updatedBy) {
+        window.updateOrderStatus = async function(orderId, newStatus, updatedBy) {
             const order = allOrders.find(o => o.id === orderId);
-            
             if (order) {
-                const oldStatus = order.status;
                 order.status = newStatus;
-                
                 localStorage.setItem('orders', JSON.stringify(allOrders));
                 await saveToCloud();
-                
                 showToast(`✅ Статус изменён на "${newStatus}"`);
-                loadHistory();
-                loadAdminOrders();
-                syncOrders();
+                syncFromCloud();
             }
-        }
+        };
 
-        // Создание заказа
         async function saveOrder() {
             const name = localStorage.getItem('userName');
             const phone = localStorage.getItem('userPhone');
             const address = document.getElementById('address').value;
             
             if (!address) { showToast('Укажите адрес'); return; }
-            if (!name || !phone) {
-                showRegisterModal(() => saveOrder());
-                return;
-            }
+            if (!name || !phone) { showRegisterModal(() => saveOrder()); return; }
             
             const order = {
                 id: Date.now(),
-                date: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
                 address: address,
                 district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-                service: document.querySelector('input[name="service"]:checked').parentElement.innerText.split('₺')[0].trim(),
+                service: getSelectedServiceText(),
                 extras: getExtras(),
                 orderDate: document.getElementById('date').value,
                 orderTime: document.getElementById('time').value,
@@ -248,14 +252,19 @@
             allOrders.unshift(order);
             localStorage.setItem('orders', JSON.stringify(allOrders));
             await saveToCloud();
-            
-            showToast('✅ Заказ создан!');
-            loadHistory();
+            showToast('✅ Заказ оформлен!');
+            syncFromCloud();
             
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
             document.getElementById('extra_fridge').checked = false;
+        }
+
+        function getSelectedServiceText() {
+            const selected = document.querySelector('input[name="service"]:checked');
+            const texts = { standard: 'Стандартная', general: 'Генеральная', after_repair: 'После ремонта', office: 'Офисная' };
+            return texts[selected.value];
         }
 
         function getExtras() {
@@ -267,11 +276,7 @@
         }
 
         function calculateTotal() {
-            let total = 500;
-            const service = document.querySelector('input[name="service"]:checked').value;
-            if (service === 'general') total = 950;
-            if (service === 'after_repair') total = 1800;
-            if (service === 'office') total = 700;
+            let total = { standard: 500, general: 950, after_repair: 1800, office: 700 }[document.querySelector('input[name="service"]:checked').value];
             if (document.getElementById('extra_ac').checked) total += 200;
             if (document.getElementById('extra_window').checked) total += 150;
             if (document.getElementById('extra_fridge').checked) total += 100;
@@ -294,99 +299,66 @@
 
         function loadHistory() {
             const userPhone = localStorage.getItem('userPhone');
-            const myOrders = currentRole === 'client' ? 
-                allOrders.filter(o => o.userPhone === userPhone) : 
-                allOrders;
-            
+            let displayOrders = currentRole === 'client' ? allOrders.filter(o => o.userPhone === userPhone) : allOrders;
             const container = document.getElementById('historyList');
-            if (myOrders.length === 0) {
-                container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
-                return;
-            }
-            
-            container.innerHTML = myOrders.map(order => {
+            if (displayOrders.length === 0) { container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>'; return; }
+            container.innerHTML = displayOrders.map(order => {
                 const config = getStatusConfig(order.status);
-                const canCancel = (currentRole === 'client' && order.status === 'Ожидает подтверждения' && order.userPhone === localStorage.getItem('userPhone'));
-                
-                return `
-                    <div class="history-item">
-                        <strong>${new Date(order.date).toLocaleDateString()}</strong>
-                        <span style="float:right;">${order.total} ₺</span><br>
-                        ${order.service}<br>
-                        <small>${order.address}</small><br>
-                        <span class="status-badge" style="background: ${config.color};">${config.label}</span>
-                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
-                    </div>
-                `;
+                return `<div class="history-item">
+                    <strong>${new Date(order.createdAt).toLocaleDateString()}</strong>
+                    <span style="float:right;">${order.total} ₺</span><br>
+                    ${order.service}<br><small>${order.address}</small><br>
+                    <span class="status-badge" style="background: ${config.color};">${config.label}</span>
+                    ${currentRole === 'client' && order.status === 'Ожидает подтверждения' ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
+                    <div class="order-id">🆔 #${order.id}</div>
+                </div>`;
             }).join('');
         }
 
         function loadAdminOrders() {
             const container = document.getElementById('adminOrdersList');
-            if (allOrders.length === 0) { container.innerHTML = '<p>Нет заказов</p>'; return; }
-            
-            container.innerHTML = allOrders.map(order => `
-                <div class="admin-order-item">
-                    <strong>${order.userName}</strong> | ${order.userPhone}<br>
-                    ${order.service} | ${order.total} ₺<br>
-                    <small>${order.address}</small><br>
-                    <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
-                    <div class="status-actions">
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
-                    </div>
+            if (allOrders.length === 0) { container.innerHTML = '<p style="text-align:center;padding:20px;">Нет заказов</p>'; return; }
+            container.innerHTML = allOrders.map(order => `<div class="admin-order-item">
+                <strong>${order.userName}</strong> | ${order.userPhone}<br>
+                ${order.service} | ${order.total} ₺<br><small>${order.address}</small><br>
+                <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
+                <div class="status-actions">
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
+                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
                 </div>
-            `).join('');
+                <div class="order-id">🆔 #${order.id}</div>
+            </div>`).join('');
         }
 
         function checkRole() {
             const phone = localStorage.getItem('userPhone');
             const isAdmin = phone === '0852159181';
             const isCleaner = phone === '05331234567';
-            
-            if (isAdmin) { 
-                currentRole = 'admin'; 
-                document.getElementById('roleBadge').innerHTML = '👑 Админ'; 
-                document.getElementById('adminFab').style.display = 'flex';
-            } else if (isCleaner) { 
-                currentRole = 'cleaner'; 
-                document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; 
-                document.getElementById('adminFab').style.display = 'flex';
-            } else { 
-                currentRole = 'client'; 
-                document.getElementById('roleBadge').innerHTML = '👤 Клиент'; 
-                document.getElementById('adminFab').style.display = 'none';
-            }
+            if (isAdmin) { currentRole = 'admin'; document.getElementById('roleBadge').innerHTML = '👑 Администратор'; document.getElementById('adminFab').style.display = 'flex'; }
+            else if (isCleaner) { currentRole = 'cleaner'; document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; document.getElementById('adminFab').style.display = 'flex'; }
+            else { currentRole = 'client'; document.getElementById('roleBadge').innerHTML = '👤 Клиент'; document.getElementById('adminFab').style.display = 'none'; }
             loadHistory();
         }
 
         function loadProfile() {
             document.getElementById('userName').value = localStorage.getItem('userName') || '';
             document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
-            document.getElementById('userEmail').value = localStorage.getItem('userEmail') || '';
             checkRole();
         }
 
         function saveProfile() {
             localStorage.setItem('userName', document.getElementById('userName').value);
             localStorage.setItem('userPhone', document.getElementById('userPhone').value);
-            localStorage.setItem('userEmail', document.getElementById('userEmail').value);
             checkRole();
             showToast('✅ Профиль сохранён!');
-            syncOrders();
+            syncFromCloud();
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
+        function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
         function showRegisterModal(callback) {
             const modal = document.getElementById('registerModal');
             document.getElementById('modalName').value = localStorage.getItem('userName') || '';
@@ -419,17 +391,17 @@
 
         document.getElementById('adminFab')?.addEventListener('click', () => { loadAdminOrders(); document.getElementById('adminModal').style.display = 'flex'; });
         document.getElementById('closeAdminBtn')?.addEventListener('click', () => document.getElementById('adminModal').style.display = 'none');
-        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => el.onchange = calculateTotal);
-        document.getElementById('orderBtn').onclick = saveOrder;
-        document.getElementById('saveProfileBtn').onclick = saveProfile;
+        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => el.addEventListener('change', calculateTotal));
+        document.getElementById('orderBtn').addEventListener('click', saveOrder);
+        document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
         
         calculateTotal();
         loadProfile();
-        document.getElementById('date').value = new Date().toISOString().split('T')[0];
-        
-        // Загружаем заказы
-        syncOrders();
-        setInterval(syncOrders, 30000);
+        syncFromCloud();
+        setInterval(syncFromCloud, 30000);
     </script>
 </body>
 </html>
