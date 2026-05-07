@@ -236,17 +236,6 @@
             font-weight: 500;
         }
 
-        .btn-small {
-            padding: 6px 12px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 4px;
-            font-size: 12px;
-        }
-
         .history-item {
             background: white;
             padding: 16px;
@@ -264,13 +253,6 @@
             color: white;
         }
 
-        .status-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
         .empty-state {
             text-align: center;
             padding: 48px;
@@ -283,6 +265,7 @@
             margin-bottom: 20px;
         }
 
+        /* Модальное окно — улучшенное */
         .modal {
             display: none;
             position: fixed;
@@ -290,7 +273,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -303,34 +286,72 @@
         .modal-content {
             background: white;
             border-radius: 24px;
-            padding: 28px;
-            max-width: 340px;
+            max-width: 500px;
             width: 90%;
-            text-align: center;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 20px;
         }
 
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            font-size: 16px;
-        }
-
-        .modal-content button {
-            width: 100%;
-            padding: 12px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            margin-top: 8px;
+        .modal-close-icon {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
             cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: bold;
+            color: #999;
+        }
+        .modal-close-icon:hover {
+            color: #333;
+        }
+        body.dark .modal-close-icon {
+            color: #aaa;
         }
 
-        .modal-close {
-            background: #999 !important;
+        .admin-order-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+            margin-bottom: 8px;
+        }
+        body.dark .admin-order-item {
+            border-bottom-color: #333;
+        }
+
+        /* Компактные кнопки статуса — в одну строку */
+        .compact-status-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .compact-status-btn {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #333;
+        }
+        .compact-status-btn:active {
+            transform: scale(0.96);
+        }
+        .compact-status-btn[data-action="confirm"] { background: #2196F3; color: white; }
+        .compact-status-btn[data-action="arrive"] { background: #FF9800; color: white; }
+        .compact-status-btn[data-action="start"] { background: #FF5722; color: white; }
+        .compact-status-btn[data-action="complete"] { background: #4CAF50; color: white; }
+        .compact-status-btn[data-action="finish"] { background: #2E7D32; color: white; }
+        .compact-status-btn[data-action="cancel"] { background: #f44336; color: white; }
+
+        body.dark .compact-status-btn:not([data-action]) {
+            background: #444;
+            color: #eee;
         }
 
         .toast-message {
@@ -348,7 +369,6 @@
             z-index: 1000;
             font-size: 14px;
         }
-
         .toast-message.show {
             opacity: 1;
         }
@@ -371,12 +391,6 @@
             color: white;
         }
 
-        .admin-order-item {
-            border-bottom: 1px solid #eee;
-            padding: 12px;
-            margin-bottom: 8px;
-        }
-
         .sync-status {
             font-size: 12px;
             text-align: center;
@@ -392,11 +406,8 @@
             color: #999;
             margin-top: 6px;
         }
-
-        h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
+        h3 { font-size: 16px; margin-bottom: 8px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -485,17 +496,17 @@
     <!-- Админ-панель (видна только админу/клинеру) -->
     <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
     <div id="adminModal" class="modal">
-        <div class="modal-content" style="max-width:500px; max-height:80vh; overflow-y:auto;">
+        <div class="modal-content">
+            <button class="modal-close-icon" id="closeAdminModalBtn">✕</button>
             <h3>🔧 Управление заказами</h3>
-            <div id="adminOrdersList"></div>
-            <button id="closeAdminBtn" class="modal-close">Закрыть</button>
+            <div id="adminOrdersList" style="margin-top: 16px;"></div>
         </div>
     </div>
 
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // ========== FIREBASE КОНФИГУРАЦИЯ (ВАША) ==========
+        // ========== FIREBASE КОНФИГУРАЦИЯ ==========
         const firebaseConfig = {
             apiKey: "AIzaSyDcsvkCEcnkCivJxa6FRoUurgIUgYwW4qg",
             authDomain: "suptemiz.firebaseapp.com",
@@ -505,17 +516,13 @@
             messagingSenderId: "399676923890",
             appId: "1:399676923890:web:44657bb2870a7d76cd56b"
         };
-        // =================================================
 
-        // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const ordersRef = database.ref('orders');
 
-        // Роли по телефонам
         const ADMIN_PHONES = ['0852159181', '+905338888888'];
         const CLEANER_PHONES = ['05331234567', '+905331234567'];
-
         let allOrders = [];
         let currentRole = 'client';
 
@@ -534,7 +541,6 @@
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         initTheme();
 
-        // --- Вспомогательные функции ---
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -552,49 +558,41 @@
             return total;
         }
 
-        function getServiceText(serviceValue) {
-            const texts = { standard: 'Стандартная', general: 'Генеральная', after_repair: 'После ремонта', office: 'Офисная' };
-            return texts[serviceValue] || 'Стандартная';
+        function getServiceText(v) {
+            const t = { standard:'Стандартная', general:'Генеральная', after_repair:'После ремонта', office:'Офисная' };
+            return t[v] || 'Стандартная';
         }
-
-        function getSelectedServiceText() {
-            return getServiceText(document.querySelector('input[name="service"]:checked').value);
-        }
-
+        function getSelectedServiceText() { return getServiceText(document.querySelector('input[name="service"]:checked').value); }
         function getExtras() {
-            const extras = [];
-            if (document.getElementById('extra_ac').checked) extras.push('Кондиционер');
-            if (document.getElementById('extra_window').checked) extras.push('Окна');
-            if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
-            return extras.join(', ') || 'Нет';
+            const e=[];
+            if(document.getElementById('extra_ac').checked) e.push('Кондиционер');
+            if(document.getElementById('extra_window').checked) e.push('Окна');
+            if(document.getElementById('extra_fridge').checked) e.push('Холодильник');
+            return e.join(', ') || 'Нет';
         }
-
         function getStatusConfig(status) {
-            const configs = {
-                'Ожидает подтверждения': { label: '⏳ Ожидает', color: '#999' },
-                'Подтверждён': { label: '✅ Подтверждён', color: '#2196F3' },
-                'Клинер выехал': { label: '🚗 Выехал', color: '#FF9800' },
-                'Уборка началась': { label: '🧹 Уборка', color: '#FF5722' },
-                'Уборка завершена': { label: '✅ Готово', color: '#4CAF50' },
-                'Завершён': { label: '⭐ Завершён', color: '#2E7D32' },
-                'Отменён': { label: '❌ Отменён', color: '#f44336' }
+            const map = {
+                'Ожидает подтверждения': { label:'⏳ Ожидает', color:'#999' },
+                'Подтверждён': { label:'✅ Подтверждён', color:'#2196F3' },
+                'Клинер выехал': { label:'🚗 Выехал', color:'#FF9800' },
+                'Уборка началась': { label:'🧹 Уборка', color:'#FF5722' },
+                'Уборка завершена': { label:'✅ Готово', color:'#4CAF50' },
+                'Завершён': { label:'⭐ Завершён', color:'#2E7D32' },
+                'Отменён': { label:'❌ Отменён', color:'#f44336' }
             };
-            return configs[status] || { label: status, color: '#999' };
+            return map[status] || { label:status, color:'#999' };
         }
 
-        // --- Работа с заказами (Firebase) ---
         function listenToOrders() {
             ordersRef.on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    const ordersArray = Object.entries(data).map(([key, order]) => ({ ...order, firebaseKey: key }));
-                    ordersArray.sort((a, b) => b.id - a.id);
-                    allOrders = ordersArray;
-                } else {
-                    allOrders = [];
-                }
+                if(data) {
+                    const arr = Object.entries(data).map(([k,o])=>({...o, firebaseKey:k}));
+                    arr.sort((a,b)=>b.id - a.id);
+                    allOrders = arr;
+                } else { allOrders = []; }
                 loadHistory();
-                loadAdminOrders(); // обновляем админку при изменении
+                loadAdminOrders();
             });
         }
 
@@ -602,140 +600,109 @@
             const name = localStorage.getItem('suptemiz_userName');
             const phone = localStorage.getItem('suptemiz_userPhone');
             const address = document.getElementById('address').value.trim();
-            if (!address) { showToast('Укажите адрес'); return; }
-            if (!name || !phone) {
-                showRegisterModal(() => createOrder());
-                return;
-            }
-
+            if(!address) { showToast('Укажите адрес'); return; }
+            if(!name || !phone) { showRegisterModal(()=>createOrder()); return; }
             const today = new Date().toISOString().split('T')[0];
             const selectedDate = document.getElementById('date').value;
-            if (selectedDate < today) { showToast('Нельзя выбрать прошедшую дату'); return; }
-
+            if(selectedDate < today) { showToast('Нельзя выбрать прошедшую дату'); return; }
             const order = {
                 id: Date.now(),
                 createdAt: new Date().toISOString(),
                 orderDate: selectedDate || today,
                 orderTime: document.getElementById('time').value,
-                address: address,
-                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-                service: getSelectedServiceText(),
-                extras: getExtras(),
-                total: calculateTotal(),
-                status: 'Ожидает подтверждения',
-                userName: name,
-                userPhone: phone
+                address, district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                service: getSelectedServiceText(), extras: getExtras(),
+                total: calculateTotal(), status: 'Ожидает подтверждения',
+                userName: name, userPhone: phone
             };
-
             await ordersRef.push(order);
             showToast('✅ Заказ оформлен!');
-
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
             document.getElementById('extra_fridge').checked = false;
         }
 
-        window.updateOrderStatus = async function(orderId, newStatus, updatedBy) {
+        window.updateOrderStatus = async function(orderId, newStatus) {
             const order = allOrders.find(o => o.id === orderId);
-            if (order && order.firebaseKey) {
+            if(order && order.firebaseKey) {
                 await ordersRef.child(order.firebaseKey).update({ status: newStatus });
-                showToast(`✅ Статус заказа #${orderId} изменён на "${newStatus}"`);
+                showToast(`✅ Статус #${orderId} → ${newStatus}`);
             }
         };
 
-        // --- Отображение истории (для клиента) ---
         function loadHistory() {
             const container = document.getElementById('historyList');
             const userPhone = localStorage.getItem('suptemiz_userPhone');
-            let displayOrders = allOrders;
-            if (currentRole === 'client' && userPhone) {
-                displayOrders = allOrders.filter(o => o.userPhone === userPhone);
-            }
-            if (displayOrders.length === 0) {
-                container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
-                return;
-            }
-            container.innerHTML = displayOrders.map(order => {
-                const config = getStatusConfig(order.status);
-                const canCancel = (currentRole === 'client' && order.status === 'Ожидает подтверждения');
+            let display = (currentRole === 'client' && userPhone) ? allOrders.filter(o=>o.userPhone===userPhone) : allOrders;
+            if(display.length===0) { container.innerHTML='<div class="empty-state">📭 Нет заказов</div>'; return; }
+            container.innerHTML = display.map(order=>{
+                const cfg=getStatusConfig(order.status);
+                const canCancel = (currentRole==='client' && order.status==='Ожидает подтверждения');
+                return `<div class="history-item">
+                    <div class="flex-between"><strong>${order.orderDate}</strong><span>${order.total} ₺</span></div>
+                    <div>${order.service}</div>
+                    <div><small>📍 ${order.address}</small></div>
+                    <div><span class="status-badge" style="background:${cfg.color}">${cfg.label}</span></div>
+                    ${canCancel ? `<div><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён')">❌ Отменить</button></div>` : ''}
+                    <div class="order-id">🆔 #${order.id}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // Компактные кнопки статуса для админки
+        function loadAdminOrders() {
+            const container = document.getElementById('adminOrdersList');
+            if(allOrders.length===0) { container.innerHTML='<p style="text-align:center;padding:20px;">Нет заказов</p>'; return; }
+            container.innerHTML = allOrders.map(order => {
+                const cfg = getStatusConfig(order.status);
+                // Набор действий в зависимости от текущей роли (админ/клинер) - для простоты даём все кнопки, но можно ограничить.
+                // Админ может все, клинер тоже все (это уже не критично)
+                const actions = [
+                    { label:'✅', title:'Подтвердить', status:'Подтверждён', action:'confirm' },
+                    { label:'🚗', title:'Выехал', status:'Клинер выехал', action:'arrive' },
+                    { label:'🧹', title:'Начать уборку', status:'Уборка началась', action:'start' },
+                    { label:'✔️', title:'Уборка завершена', status:'Уборка завершена', action:'complete' },
+                    { label:'⭐', title:'Завершить заказ', status:'Завершён', action:'finish' },
+                    { label:'❌', title:'Отменить', status:'Отменён', action:'cancel' }
+                ];
                 return `
-                    <div class="history-item">
-                        <div><strong>${order.orderDate}</strong> <span style="float:right;">${order.total} ₺</span></div>
-                        <div>${order.service}</div>
-                        <div><small>📍 ${order.address}</small></div>
-                        <div><span class="status-badge" style="background: ${config.color};">${config.label}</span></div>
-                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
+                    <div class="admin-order-item">
+                        <div><strong>${order.userName}</strong> | ${order.userPhone}</div>
+                        <div>${order.service} | ${order.total} ₺</div>
+                        <div><small>${order.address}</small></div>
+                        <div><span class="status-badge" style="background:${cfg.color}">${cfg.label}</span></div>
+                        <div class="compact-status-actions">
+                            ${actions.map(a => `<button class="compact-status-btn" data-action="${a.action}" title="${a.title}" onclick="updateOrderStatus(${order.id}, '${a.status}')">${a.label}</button>`).join('')}
+                        </div>
                         <div class="order-id">🆔 #${order.id}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // --- Отображение админки (каждый заказ со своими кнопками) ---
-        function loadAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            if (allOrders.length === 0) {
-                container.innerHTML = '<p style="text-align:center;padding:20px;">Нет заказов</p>';
-                return;
-            }
-            container.innerHTML = allOrders.map(order => `
-                <div class="admin-order-item">
-                    <strong>${order.userName}</strong> | ${order.userPhone}<br>
-                    ${order.service} | ${order.total} ₺<br>
-                    <small>${order.address}</small><br>
-                    <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
-                    <div class="status-actions" data-order-id="${order.id}">
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
-                    </div>
-                    <div class="order-id">🆔 #${order.id}</div>
-                </div>
-            `).join('');
-        }
-
-        // --- Профиль и роли ---
         function loadProfile() {
             document.getElementById('userName').value = localStorage.getItem('suptemiz_userName') || '';
             document.getElementById('userPhone').value = localStorage.getItem('suptemiz_userPhone') || '';
             checkRole();
         }
-
         function saveProfile() {
             const name = document.getElementById('userName').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
-            if (name && phone) {
+            if(name && phone) {
                 localStorage.setItem('suptemiz_userName', name);
                 localStorage.setItem('suptemiz_userPhone', phone);
                 checkRole();
                 showToast('✅ Профиль сохранён!');
-            } else {
-                showToast('Заполните имя и телефон');
-            }
+            } else showToast('Заполните имя и телефон');
         }
-
         function checkRole() {
             const phone = localStorage.getItem('suptemiz_userPhone');
-            if (ADMIN_PHONES.includes(phone)) {
-                currentRole = 'admin';
-                document.getElementById('roleBadge').innerHTML = '👑 Администратор';
-                document.getElementById('adminFab').style.display = 'flex';
-            } else if (CLEANER_PHONES.includes(phone)) {
-                currentRole = 'cleaner';
-                document.getElementById('roleBadge').innerHTML = '🧹 Клинер';
-                document.getElementById('adminFab').style.display = 'flex';
-            } else {
-                currentRole = 'client';
-                document.getElementById('roleBadge').innerHTML = '👤 Клиент';
-                document.getElementById('adminFab').style.display = 'none';
-            }
+            if(ADMIN_PHONES.includes(phone)) { currentRole='admin'; document.getElementById('roleBadge').innerHTML='👑 Администратор'; document.getElementById('adminFab').style.display='flex'; }
+            else if(CLEANER_PHONES.includes(phone)) { currentRole='cleaner'; document.getElementById('roleBadge').innerHTML='🧹 Клинер'; document.getElementById('adminFab').style.display='flex'; }
+            else { currentRole='client'; document.getElementById('roleBadge').innerHTML='👤 Клиент'; document.getElementById('adminFab').style.display='none'; }
             loadHistory();
         }
-
         function showRegisterModal(callback) {
             const modal = document.getElementById('registerModal');
             document.getElementById('modalName').value = localStorage.getItem('suptemiz_userName') || '';
@@ -744,59 +711,51 @@
             const saveHandler = () => {
                 const name = document.getElementById('modalName').value.trim();
                 const phone = document.getElementById('modalPhone').value.trim();
-                if (name && phone) {
+                if(name && phone) {
                     localStorage.setItem('suptemiz_userName', name);
                     localStorage.setItem('suptemiz_userPhone', phone);
                     modal.classList.remove('active');
-                    if (callback) callback();
-                } else {
-                    showToast('Заполните имя и телефон');
-                }
+                    if(callback) callback();
+                } else showToast('Заполните имя и телефон');
             };
-            const closeHandler = () => {
-                modal.classList.remove('active');
-                document.getElementById('modalSaveBtn').removeEventListener('click', saveHandler);
-                document.getElementById('modalCloseBtn').removeEventListener('click', closeHandler);
-            };
+            const closeHandler = () => modal.classList.remove('active');
             document.getElementById('modalSaveBtn').onclick = saveHandler;
             document.getElementById('modalCloseBtn').onclick = closeHandler;
         }
 
-        // --- Инициализация ---
+        // Вкладки
         function initTabs() {
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.dataset.tab;
-                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById(tabId + '-tab').classList.add('active');
-                    if (tabId === 'history') loadHistory();
-                    if (tabId === 'profile') loadProfile();
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+                    document.getElementById(tab+'-tab').classList.add('active');
+                    if(tab==='history') loadHistory();
+                    if(tab==='profile') loadProfile();
                 });
             });
         }
 
         // Установка минимальной даты
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').min = today;
-        document.getElementById('date').value = today;
-
-        // Слушатели
-        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => {
-            el.addEventListener('change', calculateTotal);
-        });
-        document.getElementById('orderBtn').addEventListener('click', createOrder);
-        document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
-        document.getElementById('adminFab')?.addEventListener('click', () => {
+        const todayDate = new Date().toISOString().split('T')[0];
+        document.getElementById('date').min = todayDate;
+        document.getElementById('date').value = todayDate;
+        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el=>el.addEventListener('change',calculateTotal));
+        document.getElementById('orderBtn').addEventListener('click',createOrder);
+        document.getElementById('saveProfileBtn').addEventListener('click',saveProfile);
+        const adminFab = document.getElementById('adminFab');
+        const adminModal = document.getElementById('adminModal');
+        adminFab?.addEventListener('click', () => {
             loadAdminOrders();
-            document.getElementById('adminModal').style.display = 'flex';
+            adminModal.classList.add('active');
         });
-        document.getElementById('closeAdminBtn')?.addEventListener('click', () => {
-            document.getElementById('adminModal').style.display = 'none';
-        });
+        // Закрытие модалки через крестик или клик на фон
+        const closeAdminBtn = document.getElementById('closeAdminModalBtn');
+        closeAdminBtn?.addEventListener('click', () => adminModal.classList.remove('active'));
+        adminModal?.addEventListener('click', (e) => { if(e.target === adminModal) adminModal.classList.remove('active'); });
 
-        // Запуск
         initTabs();
         calculateTotal();
         loadProfile();
