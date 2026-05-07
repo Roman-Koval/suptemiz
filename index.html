@@ -4,270 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#2E7D32">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>SupTemiz - Клининг Северный Кипр</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f5f5f5;
-            padding-bottom: 80px;
-        }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding-bottom: 80px; }
         .app-container { max-width: 500px; margin: 0 auto; background: #f5f5f5; min-height: 100vh; }
-        header {
-            background: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .logo { font-size: 24px; font-weight: 700; }
+        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 700; }
         .accent { color: #2E7D32; }
-        .role-badge {
-            background: #f0f0f0;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
+        .role-badge { background: #f0f0f0; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
         .lang-switcher { display: flex; gap: 8px; }
-        .lang-btn {
-            background: none;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 6px 12px;
-            cursor: pointer;
-        }
+        .lang-btn { background: none; border: 1px solid #ddd; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
         .lang-btn.active { background: #2E7D32; border-color: #2E7D32; color: white; }
-        .promo-banner {
-            background: linear-gradient(135deg, #2E7D32, #1B5E20);
-            color: white;
-            padding: 12px 20px;
-            margin: 12px;
-            border-radius: 12px;
-        }
-        .main-nav {
-            display: flex;
-            background: white;
-            margin: 12px;
-            border-radius: 16px;
-            padding: 4px;
-            gap: 4px;
-        }
-        .nav-tab {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-        }
+        .promo-banner { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 10px 16px; margin: 12px; border-radius: 12px; font-size: 14px; }
+        .main-nav { display: flex; background: white; margin: 12px; border-radius: 16px; padding: 4px; gap: 4px; }
+        .nav-tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; cursor: pointer; font-weight: 500; }
         .nav-tab.active { background: #2E7D32; color: white; }
         .tab-content { display: none; padding: 0 12px; }
         .tab-content.active { display: block; }
-        .card {
-            background: white;
-            margin: 12px 0;
-            padding: 18px;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .form-select, .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            margin-top: 8px;
-            font-size: 16px;
-        }
-        .service-option {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            margin: 8px 0;
-            background: #f9f9f9;
-            border-radius: 12px;
-            cursor: pointer;
-        }
+        .card { background: white; margin: 12px 0; padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .form-select, .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-top: 8px; font-size: 16px; }
+        .service-option { display: flex; align-items: center; padding: 12px; margin: 8px 0; background: #f9f9f9; border-radius: 12px; cursor: pointer; }
         .service-option input { margin-right: 12px; }
         .price { margin-left: auto; color: #2E7D32; font-weight: 700; }
         .extra-option { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
         .extra-option input { margin-right: 12px; }
-        .extra-option .price { margin-left: auto; }
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 12px 0;
-        }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            background: #e0e0e0;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .btn-small {
-            padding: 6px 12px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        .history-item {
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            position: relative;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin-top: 8px;
-        }
-        .status-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .status-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .status-btn:active { transform: scale(0.95); }
+        .btn-primary { width: 100%; padding: 16px; background: #2E7D32; color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; margin: 12px 0; }
+        .btn-secondary { width: 100%; padding: 12px; background: #e0e0e0; border: none; border-radius: 12px; cursor: pointer; }
+        .btn-small { padding: 6px 12px; background: #2E7D32; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 4px; font-size: 12px; }
+        .history-item { background: white; padding: 16px; border-radius: 12px; margin-bottom: 12px; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-top: 8px; color: white; }
+        .status-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
         .empty-state { text-align: center; padding: 48px; color: #999; }
         .avatar { font-size: 64px; text-align: center; margin-bottom: 20px; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            padding: 28px;
-            max-width: 340px;
-            width: 90%;
-            text-align: center;
-        }
-        .modal-content h3 { margin-bottom: 12px; color: #2E7D32; }
-        .modal-content input {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            font-size: 16px;
-        }
-        .modal-content button {
-            width: 100%;
-            padding: 14px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            margin-top: 12px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+        .modal-content { background: white; border-radius: 24px; padding: 28px; max-width: 340px; width: 90%; text-align: center; }
+        .modal-content input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; }
+        .modal-content button { width: 100%; padding: 12px; background: #2E7D32; color: white; border: none; border-radius: 12px; margin-top: 8px; cursor: pointer; }
         .modal-close { background: #999 !important; }
-        .toast-message {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1a1a1a;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 1000;
-            font-size: 14px;
-        }
+        .toast-message { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 40px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; font-size: 14px; }
         .toast-message.show { opacity: 1; }
-        
-        /* Админ панель */
-        .admin-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #333;
-            border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 200;
-        }
-        .admin-order-item {
-            border-bottom: 1px solid #ddd;
-            padding: 12px;
-            margin-bottom: 8px;
-        }
-        .role-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .role-btn {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            background: white;
-            cursor: pointer;
-        }
-        .role-btn.active {
-            background: #2E7D32;
-            color: white;
-            border-color: #2E7D32;
-        }
+        .admin-fab { position: fixed; bottom: 20px; right: 20px; background: #333; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 200; font-size: 24px; }
+        .admin-order-item { border-bottom: 1px solid #ddd; padding: 12px; margin-bottom: 8px; }
+        .sync-status { font-size: 10px; color: #999; text-align: center; padding: 4px; }
+        details { margin-top: 8px; }
+        summary { font-size: 11px; color: #666; cursor: pointer; }
     </style>
 </head>
-<body>
+ <body>
     <div class="app-container">
         <header>
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
-            <div>
-                <span class="role-badge" id="roleBadge">👤 Клиент</span>
-            </div>
+            <div><span class="role-badge" id="roleBadge">👤 Клиент</span></div>
             <div class="lang-switcher">
                 <button class="lang-btn active" data-lang="ru">RU</button>
                 <button class="lang-btn" data-lang="en">EN</button>
@@ -276,6 +65,7 @@
         </header>
 
         <div class="promo-banner">🎉 Первая уборка со скидкой 20%</div>
+        <div class="sync-status" id="syncStatus">🔄 Синхронизация...</div>
 
         <nav class="main-nav">
             <button class="nav-tab active" data-tab="order">📋 Заказ</button>
@@ -316,38 +106,27 @@
                 <h3>📅 Дата и время</h3>
                 <input type="date" id="date" class="form-input">
                 <select id="time" class="form-select">
-                    <option>09:00 - 12:00</option>
-                    <option>12:00 - 15:00</option>
-                    <option>15:00 - 18:00</option>
-                    <option>18:00 - 21:00</option>
+                    <option>09:00 - 12:00</option><option>12:00 - 15:00</option>
+                    <option>15:00 - 18:00</option><option>18:00 - 21:00</option>
                 </select>
             </div>
 
-            <div class="card">
-                <h3>💰 Итого: <span id="totalPrice" style="color:#2E7D32;">500 ₺</span></h3>
-            </div>
-
+            <div class="card"><h3>💰 Итого: <span id="totalPrice" style="color:#2E7D32;">500 ₺</span></h3></div>
             <button class="btn-primary" id="orderBtn">📞 Оформить заказ</button>
         </div>
 
         <!-- История -->
-        <div id="history-tab" class="tab-content">
-            <div id="historyList" class="history-list">
-                <div class="empty-state">📭 Нет заказов</div>
-            </div>
-        </div>
+        <div id="history-tab" class="tab-content"><div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div></div>
 
         <!-- Профиль -->
         <div id="profile-tab" class="tab-content">
-            <div class="card">
-                <div class="avatar">👤</div>
+            <div class="card"><div class="avatar">👤</div>
                 <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
                 <input type="tel" id="userPhone" placeholder="Телефон" class="form-input">
                 <input type="email" id="userEmail" placeholder="Email" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
-            <div class="card">
-                <h4>📞 Контакты поддержки</h4>
+            <div class="card"><h4>📞 Контакты поддержки</h4>
                 <p>WhatsApp: +90 533 888 88 88</p>
                 <p>Telegram: @suptemiz_bot</p>
             </div>
@@ -355,64 +134,31 @@
     </div>
 
     <!-- Модальное окно регистрации -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <h3>📝 Заполните профиль</h3>
-            <p style="margin-bottom: 16px; color: #666;">Для оформления заказа нужны ваши контакты</p>
-            <input type="text" id="modalName" placeholder="Ваше имя">
-            <input type="tel" id="modalPhone" placeholder="Телефон">
-            <button id="modalSaveBtn">Сохранить и продолжить</button>
-            <button id="modalCloseBtn" class="modal-close">Отмена</button>
-        </div>
-    </div>
+    <div id="registerModal" class="modal"><div class="modal-content"><h3>📝 Заполните профиль</h3>
+        <p style="margin-bottom:12px; color:#666;">Для заказа нужны ваши контакты</p>
+        <input type="text" id="modalName" placeholder="Ваше имя">
+        <input type="tel" id="modalPhone" placeholder="Телефон">
+        <button id="modalSaveBtn">Сохранить и продолжить</button>
+        <button id="modalCloseBtn" class="modal-close">Отмена</button>
+    </div></div>
 
     <!-- Админ панель -->
-    <div id="adminFab" class="admin-fab" style="display: none;">
-        <span style="font-size: 24px;">🔧</span>
-    </div>
-    
-    <div id="adminModal" class="modal">
-        <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
-            <h3>🔧 Админ панель</h3>
-            <div class="role-selector">
-                <button class="role-btn active" data-role="admin">👑 Админ</button>
-                <button class="role-btn" data-role="cleaner">🧹 Клинер</button>
-            </div>
-            <div id="adminOrdersList"></div>
-            <button id="closeAdminBtn" class="modal-close">Закрыть</button>
-        </div>
-    </div>
+    <div id="adminFab" class="admin-fab" style="display:none;">🔧</div>
+    <div id="adminModal" class="modal"><div class="modal-content" style="max-width:500px; max-height:80vh; overflow-y:auto;">
+        <h3>🔧 Управление заказами</h3>
+        <div id="adminOrdersList"></div>
+        <button id="closeAdminBtn" class="modal-close">Закрыть</button>
+    </div></div>
 
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // ========== ТЕЛЕГРАМ НАСТРОЙКИ ==========
+        // ========== TELEGRAM НАСТРОЙКИ ==========
         const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
-        const CHAT_ID = '897174464';
+        const ADMIN_CHAT_ID = '897174464';  // Ваш Telegram ID для уведомлений
         
         let currentRole = 'client';
-        let currentUserPhone = '';
-
-        // ========== СТАТУСЫ И РОЛИ ==========
-        const statuses = {
-            client: [
-                { value: 'Ожидает подтверждения', label: '⏳ Ожидает', color: '#999', allowed: ['admin', 'client'] },
-                { value: 'Отменён клиентом', label: '❌ Отменён', color: '#f44336', allowed: ['client'] }
-            ],
-            admin: [
-                { value: 'Подтверждён', label: '✅ Подтверждён', color: '#2196F3', allowed: ['admin'] },
-                { value: 'Назначен клинер', label: '👨‍🔧 Назначен клинер', color: '#9C27B0', allowed: ['admin'] }
-            ],
-            cleaner: [
-                { value: 'Клинер выехал', label: '🚗 Выехал к вам', color: '#FF9800', allowed: ['cleaner'] },
-                { value: 'Уборка началась', label: '🧹 Уборка началась', color: '#FF5722', allowed: ['cleaner'] },
-                { value: 'Уборка завершена', label: '✅ Уборка завершена', color: '#4CAF50', allowed: ['cleaner'] }
-            ],
-            final: [
-                { value: 'Завершён', label: '⭐ Завершён', color: '#2E7D32', allowed: ['admin'] },
-                { value: 'Отменён администратором', label: '❌ Отменён', color: '#f44336', allowed: ['admin'] }
-            ]
-        };
+        let allOrders = []; // Все заказы из Telegram
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -421,12 +167,118 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
+        // ========== ЗАГРУЗКА ЗАКАЗОВ ИЗ TELEGRAM ==========
+        async function loadOrdersFromTelegram() {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-100`);
+                const data = await response.json();
+                
+                if (data.ok && data.result) {
+                    const ordersFromMessages = [];
+                    for (const update of data.result) {
+                        if (update.message && update.message.text) {
+                            const text = update.message.text;
+                            if (text.includes('НОВЫЙ ЗАКАЗ SupTemiz!')) {
+                                const order = parseOrderFromMessage(text, update.message.date);
+                                if (order && !ordersFromMessages.find(o => o.id === order.id)) {
+                                    ordersFromMessages.push(order);
+                                }
+                            }
+                            // Также обрабатываем обновления статусов
+                            if (text.includes('ОБНОВЛЕНИЕ СТАТУСА')) {
+                                const statusUpdate = parseStatusUpdate(text);
+                                if (statusUpdate) {
+                                    updateOrderInStorage(statusUpdate);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (ordersFromMessages.length > 0) {
+                        // Сохраняем заказы в localStorage
+                        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        const mergedOrders = [...ordersFromMessages, ...existingOrders];
+                        const uniqueOrders = mergedOrders.filter((order, index, self) => 
+                            index === self.findIndex(o => o.id === order.id)
+                        );
+                        uniqueOrders.sort((a,b) => b.id - a.id);
+                        localStorage.setItem('orders', JSON.stringify(uniqueOrders));
+                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано с Telegram';
+                    }
+                }
+                loadHistory();
+                loadAdminOrders();
+            } catch(e) {
+                console.log('Ошибка загрузки из Telegram:', e);
+                document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим';
+            }
+        }
+
+        function parseOrderFromMessage(text, timestamp) {
+            const idMatch = text.match(/🆔 ID: (\d+)/);
+            const nameMatch = text.match(/👤 Клиент: (.+)/);
+            const phoneMatch = text.match(/📞 Телефон: (.+)/);
+            const districtMatch = text.match(/📍 (.+?)\n/);
+            const addressMatch = text.match(/🏠 (.+?)\n/);
+            const serviceMatch = text.match(/🧹 (.+?)\n/);
+            const priceMatch = text.match(/💰 (\d+) ₺/);
+            
+            if (idMatch && nameMatch && phoneMatch) {
+                return {
+                    id: parseInt(idMatch[1]),
+                    date: new Date(timestamp * 1000).toISOString(),
+                    userName: nameMatch[1],
+                    userPhone: phoneMatch[1],
+                    district: districtMatch ? districtMatch[1] : '',
+                    address: addressMatch ? addressMatch[1] : '',
+                    service: serviceMatch ? serviceMatch[1] : '',
+                    total: priceMatch ? parseInt(priceMatch[1]) : 0,
+                    status: 'Ожидает подтверждения',
+                    orderDate: new Date().toISOString().split('T')[0],
+                    orderTime: '09:00 - 12:00',
+                    extras: 'Нет'
+                };
+            }
+            return null;
+        }
+
+        function parseStatusUpdate(text) {
+            const idMatch = text.match(/Заказ #(\d+)/);
+            const statusMatch = text.match(/Новый статус: (.+?)(?:\n|$)/);
+            if (idMatch && statusMatch) {
+                return { orderId: parseInt(idMatch[1]), newStatus: statusMatch[1] };
+            }
+            return null;
+        }
+
+        function updateOrderInStorage(update) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const index = orders.findIndex(o => o.id === update.orderId);
+            if (index !== -1) {
+                orders[index].status = update.newStatus;
+                localStorage.setItem('orders', JSON.stringify(orders));
+            }
+        }
+
+        // ========== ОТПРАВКА В TELEGRAM ==========
+        async function sendTelegramMessage(text, chatId = ADMIN_CHAT_ID) {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: text })
+                });
+                const data = await response.json();
+                if (!data.ok) console.log('Ошибка Telegram:', data.description);
+                return data.ok;
+            } catch(e) { console.log('Ошибка:', e); return false; }
+        }
+
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         function calculateTotal() {
-            let total = 500;
-            const service = document.querySelector('input[name="service"]:checked').value;
-            if (service === 'general') total = 950;
-            if (service === 'after_repair') total = 1800;
-            if (service === 'office') total = 700;
+            let total = document.querySelector('input[name="service"]:checked').value === 'standard' ? 500 :
+                        document.querySelector('input[name="service"]:checked').value === 'general' ? 950 :
+                        document.querySelector('input[name="service"]:checked').value === 'after_repair' ? 1800 : 700;
             if (document.getElementById('extra_ac').checked) total += 200;
             if (document.getElementById('extra_window').checked) total += 150;
             if (document.getElementById('extra_fridge').checked) total += 100;
@@ -434,108 +286,70 @@
             return total;
         }
 
-        function sendTelegramMessage(text) {
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
-            }).catch(e => console.log('Ошибка:', e));
+        function getStatusConfig(status) {
+            const configs = {
+                'Ожидает подтверждения': { label: '⏳ Ожидает', color: '#999' },
+                'Подтверждён': { label: '✅ Подтверждён', color: '#2196F3' },
+                'Назначен клинер': { label: '👨‍🔧 Назначен клинер', color: '#9C27B0' },
+                'Клинер выехал': { label: '🚗 Выехал', color: '#FF9800' },
+                'Уборка началась': { label: '🧹 Уборка', color: '#FF5722' },
+                'Уборка завершена': { label: '✅ Завершена', color: '#4CAF50' },
+                'Завершён': { label: '⭐ Завершён', color: '#2E7D32' },
+                'Отменён клиентом': { label: '❌ Отменён', color: '#f44336' },
+                'Отменён администратором': { label: '❌ Отменён', color: '#f44336' }
+            };
+            return configs[status] || { label: status, color: '#999' };
         }
 
-        function sendStatusUpdate(order, oldStatus, newStatus, updatedBy) {
-            const message = `📢 ОБНОВЛЕНИЕ СТАТУСА ЗАКАЗА!
+        async function updateOrderStatus(orderId, newStatus, updatedBy) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1) {
+                const oldStatus = orders[orderIndex].status;
+                orders[orderIndex].status = newStatus;
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                const message = `📢 ОБНОВЛЕНИЕ СТАТУСА ЗАКАЗА!
 ━━━━━━━━━━━━━━━━━━━━━
-🆔 Заказ #${order.id}
-👤 Клиент: ${order.userName}
-📞 Телефон: ${order.userPhone}
-📍 Адрес: ${order.address}
-🧹 Услуга: ${order.service}
-💰 Сумма: ${order.total} ₺
-━━━━━━━━━━━━━━━━━━━━━
+🆔 Заказ #${orderId}
+👤 Клиент: ${orders[orderIndex].userName}
+📞 Телефон: ${orders[orderIndex].userPhone}
+🧹 Услуга: ${orders[orderIndex].service}
 📌 Старый статус: ${oldStatus}
 ✨ Новый статус: ${newStatus}
-👨‍💼 Обновил: ${updatedBy}
-━━━━━━━━━━━━━━━━━━━━━
-⏰ ${new Date().toLocaleString('ru-RU')}`;
-            
-            sendTelegramMessage(message);
+👨‍💼 Обновил: ${updatedBy}`;
+                
+                await sendTelegramMessage(message);
+                showToast(`Статус изменён на "${newStatus}"`);
+                loadHistory();
+                loadAdminOrders();
+            }
         }
 
-        function getSelectedServiceText() {
-            const selected = document.querySelector('input[name="service"]:checked');
-            if (selected.value === 'standard') return 'Стандартная';
-            if (selected.value === 'general') return 'Генеральная';
-            if (selected.value === 'after_repair') return 'После ремонта';
-            return 'Офисная';
-        }
-
-        function getExtras() {
-            const extras = [];
-            if (document.getElementById('extra_ac').checked) extras.push('Кондиционер');
-            if (document.getElementById('extra_window').checked) extras.push('Окна');
-            if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
-            return extras.join(', ') || 'Нет';
-        }
-
-        function showRegisterModal(callback) {
-            const modal = document.getElementById('registerModal');
-            const modalName = document.getElementById('modalName');
-            const modalPhone = document.getElementById('modalPhone');
-            
-            modalName.value = localStorage.getItem('userName') || '';
-            modalPhone.value = localStorage.getItem('userPhone') || '';
-            
-            modal.classList.add('active');
-            
-            const saveHandler = () => {
-                const name = modalName.value.trim();
-                const phone = modalPhone.value.trim();
-                if (name && phone) {
-                    localStorage.setItem('userName', name);
-                    localStorage.setItem('userPhone', phone);
-                    modal.classList.remove('active');
-                    if (callback) callback();
-                } else {
-                    showToast('Заполните имя и телефон');
-                }
-            };
-            
-            document.getElementById('modalSaveBtn').onclick = saveHandler;
-            document.getElementById('modalCloseBtn').onclick = () => modal.classList.remove('active');
-        }
-
-        function saveOrder() {
+        async function saveOrder() {
             const name = localStorage.getItem('userName');
             const phone = localStorage.getItem('userPhone');
             const address = document.getElementById('address').value;
             
-            if (!address) {
-                showToast('Укажите адрес');
-                return;
-            }
-            
+            if (!address) { showToast('Укажите адрес'); return; }
             if (!name || !phone) {
                 showRegisterModal(() => saveOrder());
                 return;
             }
             
-            const districtSelect = document.getElementById('district');
-            const timeSelect = document.getElementById('time');
-            
             const order = {
                 id: Date.now(),
                 date: new Date().toISOString(),
                 address: address,
-                district: districtSelect.options[districtSelect.selectedIndex].text,
-                service: getSelectedServiceText(),
+                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                service: document.querySelector('input[name="service"]:checked').parentElement.innerText.split('₺')[0].trim(),
                 extras: getExtras(),
                 orderDate: document.getElementById('date').value,
-                orderTime: timeSelect.options[timeSelect.selectedIndex].text,
+                orderTime: document.getElementById('time').value,
                 total: calculateTotal(),
                 status: 'Ожидает подтверждения',
                 userName: name,
-                userPhone: phone,
-                statusHistory: [{ status: 'Ожидает подтверждения', date: new Date().toISOString(), by: name }]
+                userPhone: phone
             };
             
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -544,6 +358,7 @@
             
             const message = `🚨 НОВЫЙ ЗАКАЗ SupTemiz!
 ━━━━━━━━━━━━━━━━━━━━━
+🆔 ID: ${order.id}
 👤 Клиент: ${order.userName}
 📞 Телефон: ${order.userPhone}
 📍 ${order.district}
@@ -554,7 +369,7 @@
 💰 ${order.total} ₺
 ━━━━━━━━━━━━━━━━━━━━━`;
             
-            sendTelegramMessage(message);
+            await sendTelegramMessage(message);
             showToast('✅ Заказ оформлен!');
             loadHistory();
             
@@ -564,148 +379,87 @@
             document.getElementById('extra_fridge').checked = false;
         }
 
-        function updateOrderStatus(orderId, newStatus, updatedBy) {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const orderIndex = orders.findIndex(o => o.id === orderId);
-            
-            if (orderIndex !== -1) {
-                const oldStatus = orders[orderIndex].status;
-                orders[orderIndex].status = newStatus;
-                if (!orders[orderIndex].statusHistory) orders[orderIndex].statusHistory = [];
-                orders[orderIndex].statusHistory.unshift({ status: newStatus, date: new Date().toISOString(), by: updatedBy });
-                localStorage.setItem('orders', JSON.stringify(orders));
-                
-                sendStatusUpdate(orders[orderIndex], oldStatus, newStatus, updatedBy);
-                showToast(`Статус изменён на "${newStatus}"`);
-                loadHistory();
-                
-                if (document.getElementById('adminModal').style.display === 'flex') {
-                    loadAdminOrders();
-                }
-            }
+        function getExtras() {
+            const extras = [];
+            if (document.getElementById('extra_ac').checked) extras.push('Кондиционер');
+            if (document.getElementById('extra_window').checked) extras.push('Окна');
+            if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
+            return extras.join(', ') || 'Нет';
         }
 
         function loadHistory() {
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             const userPhone = localStorage.getItem('userPhone');
-            const userOrders = orders.filter(o => o.userPhone === userPhone);
+            const filtered = currentRole === 'client' ? orders.filter(o => o.userPhone === userPhone) : orders;
             const container = document.getElementById('historyList');
             
-            if (userOrders.length === 0) {
+            if (filtered.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
                 return;
             }
             
-            container.innerHTML = userOrders.map(order => {
-                const statusConfig = getStatusConfig(order.status);
-                const availableActions = getAvailableActions(order.status, currentRole, order.userPhone);
+            container.innerHTML = filtered.map(order => {
+                const config = getStatusConfig(order.status);
+                const canCancel = (currentRole === 'client' && order.status === 'Ожидает подтверждения' && order.userPhone === localStorage.getItem('userPhone'));
+                const canUpdate = currentRole !== 'client';
                 
                 return `
                     <div class="history-item">
                         <strong>${new Date(order.date).toLocaleDateString()}</strong>
-                        <span style="float: right;">${order.total} ₺</span><br>
+                        <span style="float:right;">${order.total} ₺</span><br>
                         ${order.service}<br>
                         <small>${order.address}</small><br>
-                        <span class="status-badge" style="background: ${statusConfig.color}; color: white;">
-                            ${statusConfig.label}
-                        </span>
-                        ${availableActions.length > 0 ? `
+                        <span class="status-badge" style="background: ${config.color};">${config.label}</span>
+                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён клиентом', '${order.userName}')">❌ Отменить заказ</button></div>` : ''}
+                        ${canUpdate ? `
                             <div class="status-actions">
-                                ${availableActions.map(action => `
-                                    <button class="status-btn" style="background: ${action.color}; color: white;" onclick="updateOrderStatus(${order.id}, '${action.value}', '${currentRole === 'client' ? order.userName : (currentRole === 'admin' ? 'Администратор' : 'Клинер')}')">
-                                        ${action.label}
-                                    </button>
-                                `).join('')}
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Назначен клинер', 'Админ')">👨‍🔧 Назначить клинера</button>
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать уборку</button>
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Завершить уборку</button>
+                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить заказ</button>
                             </div>
-                        ` : ''}
-                        ${order.statusHistory && order.statusHistory.length > 0 ? `
-                            <details style="margin-top: 12px;">
-                                <summary style="font-size: 12px; color: #666; cursor: pointer;">📋 История статусов</summary>
-                                <div style="margin-top: 8px; font-size: 11px; color: #888;">
-                                    ${order.statusHistory.map(h => `
-                                        <div>• ${getStatusLabel(h.status)} — ${new Date(h.date).toLocaleString()} (${h.by})</div>
-                                    `).join('')}
-                                </div>
-                            </details>
                         ` : ''}
                     </div>
                 `;
             }).join('');
-        }
-
-        function getStatusConfig(status) {
-            for (const group of Object.values(statuses)) {
-                const found = group.find(s => s.value === status);
-                if (found) return found;
-            }
-            return { label: status, color: '#999' };
-        }
-
-        function getStatusLabel(status) {
-            for (const group of Object.values(statuses)) {
-                const found = group.find(s => s.value === status);
-                if (found) return found.label;
-            }
-            return status;
-        }
-
-        function getAvailableActions(currentStatus, role, orderUserPhone) {
-            const actions = [];
-            const currentUserPhone = localStorage.getItem('userPhone');
-            
-            if (role === 'client' && currentUserPhone !== orderUserPhone) return actions;
-            
-            for (const group of Object.values(statuses)) {
-                for (const status of group) {
-                    if (status.allowed.includes(role) && status.value !== currentStatus) {
-                        actions.push(status);
-                    }
-                }
-            }
-            return actions;
         }
 
         function loadAdminOrders() {
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             const container = document.getElementById('adminOrdersList');
-            
-            if (orders.length === 0) {
-                container.innerHTML = '<p>Нет заказов</p>';
-                return;
-            }
-            
-            container.innerHTML = orders.map(order => {
-                const availableActions = getAvailableActions(order.status, currentRole, order.userPhone);
-                
-                return `
-                    <div class="admin-order-item">
-                        <div><strong>${order.userName}</strong> | ${order.userPhone}</div>
-                        <div>${order.service} | ${order.total} ₺</div>
-                        <div><small>${order.address}</small></div>
-                        <div style="margin-top: 8px;">
-                            <span class="status-badge" style="background: ${getStatusConfig(order.status).color}; color: white;">
-                                ${getStatusConfig(order.status).label}
-                            </span>
-                        </div>
-                        ${availableActions.length > 0 ? `
-                            <div class="status-actions" style="margin-top: 8px;">
-                                ${availableActions.map(action => `
-                                    <button class="status-btn" style="background: ${action.color}; color: white;" onclick="updateOrderStatus(${order.id}, '${action.value}', '${currentRole === 'admin' ? 'Администратор' : 'Клинер'}')">
-                                        ${action.label}
-                                    </button>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+            if (orders.length === 0) { container.innerHTML = '<p>Нет заказов</p>'; return; }
+            container.innerHTML = orders.map(order => `
+                <div class="admin-order-item">
+                    <strong>${order.userName}</strong> | ${order.userPhone}<br>
+                    ${order.service} | ${order.total} ₺<br>
+                    <small>${order.address}</small><br>
+                    <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
+                    <div class="status-actions">
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Назначен клинер', 'Админ')">👨‍🔧 Назначить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён администратором', 'Админ')">❌ Отменить</button>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
+        }
+
+        function checkRole() {
+            const phone = localStorage.getItem('userPhone');
+            const isAdmin = phone === '0852159181';
+            const isCleaner = phone === '05331234567';
+            if (isAdmin) { currentRole = 'admin'; document.getElementById('roleBadge').innerHTML = '👑 Админ'; document.getElementById('adminFab').style.display = 'flex'; }
+            else if (isCleaner) { currentRole = 'cleaner'; document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; document.getElementById('adminFab').style.display = 'flex'; }
+            else { currentRole = 'client'; document.getElementById('roleBadge').innerHTML = '👤 Клиент'; document.getElementById('adminFab').style.display = 'none'; }
+            loadHistory();
         }
 
         function loadProfile() {
             document.getElementById('userName').value = localStorage.getItem('userName') || '';
             document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
             document.getElementById('userEmail').value = localStorage.getItem('userEmail') || '';
-            currentUserPhone = localStorage.getItem('userPhone') || '';
             checkRole();
         }
 
@@ -713,32 +467,29 @@
             localStorage.setItem('userName', document.getElementById('userName').value);
             localStorage.setItem('userPhone', document.getElementById('userPhone').value);
             localStorage.setItem('userEmail', document.getElementById('userEmail').value);
-            currentUserPhone = localStorage.getItem('userPhone') || '';
             checkRole();
             showToast('✅ Профиль сохранён!');
         }
 
-        function checkRole() {
-            const userPhone = localStorage.getItem('userPhone');
-            const isAdmin = userPhone === '0852159181' || userPhone === '+905338888888';
-            const isCleaner = userPhone === '05331234567' || userPhone === '+905331234567';
-            
-            if (isAdmin) {
-                currentRole = 'admin';
-                document.getElementById('roleBadge').innerHTML = '👑 Администратор';
-                document.getElementById('adminFab').style.display = 'flex';
-            } else if (isCleaner) {
-                currentRole = 'cleaner';
-                document.getElementById('roleBadge').innerHTML = '🧹 Клинер';
-                document.getElementById('adminFab').style.display = 'flex';
-            } else {
-                currentRole = 'client';
-                document.getElementById('roleBadge').innerHTML = '👤 Клиент';
-                document.getElementById('adminFab').style.display = 'none';
-            }
+        function showRegisterModal(callback) {
+            const modal = document.getElementById('registerModal');
+            document.getElementById('modalName').value = localStorage.getItem('userName') || '';
+            document.getElementById('modalPhone').value = localStorage.getItem('userPhone') || '';
+            modal.classList.add('active');
+            document.getElementById('modalSaveBtn').onclick = () => {
+                const name = document.getElementById('modalName').value.trim();
+                const phone = document.getElementById('modalPhone').value.trim();
+                if (name && phone) {
+                    localStorage.setItem('userName', name);
+                    localStorage.setItem('userPhone', phone);
+                    modal.classList.remove('active');
+                    if (callback) callback();
+                } else showToast('Заполните имя и телефон');
+            };
+            document.getElementById('modalCloseBtn').onclick = () => modal.classList.remove('active');
         }
 
-        // Вкладки
+        // Инициализация
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.onclick = () => {
                 document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -750,34 +501,20 @@
             };
         });
 
-        // Админ панель
-        document.getElementById('adminFab')?.addEventListener('click', () => {
-            loadAdminOrders();
-            document.getElementById('adminModal').style.display = 'flex';
-        });
-        document.getElementById('closeAdminBtn')?.addEventListener('click', () => {
-            document.getElementById('adminModal').style.display = 'none';
-        });
-        
-        document.querySelectorAll('.role-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentRole = btn.dataset.role;
-                loadAdminOrders();
-            };
-        });
-
-        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => {
-            el.onchange = calculateTotal;
-        });
+        document.getElementById('adminFab')?.addEventListener('click', () => { loadAdminOrders(); document.getElementById('adminModal').style.display = 'flex'; });
+        document.getElementById('closeAdminBtn')?.addEventListener('click', () => document.getElementById('adminModal').style.display = 'none');
+        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => el.onchange = calculateTotal);
         document.getElementById('orderBtn').onclick = saveOrder;
         document.getElementById('saveProfileBtn').onclick = saveProfile;
         
         calculateTotal();
-        loadHistory();
         loadProfile();
+        loadHistory();
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        
+        // Загружаем заказы из Telegram при старте
+        loadOrdersFromTelegram();
+        setInterval(loadOrdersFromTelegram, 30000); // Каждые 30 секунд
     </script>
 </body>
 </html>
