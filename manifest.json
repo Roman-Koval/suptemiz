@@ -1,36 +1,20 @@
 {
-    "name": "SupTemiz — Клининг Северного Кипра",
-    "short_name": "SupTemiz",
-    "description": "Профессиональный клининг в Гирне, Лефкоше, Газимагусе и других районах Северного Кипра",
-    "start_url": "/suptemiz/",
-    "display": "standalone",
-    "background_color": "#f8fafc",
-    "theme_color": "#22c55e",
-    "orientation": "portrait-primary",
-    "icons": [
-        {
-            "src": "icons/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "icons/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ],
-    "categories": ["lifestyle", "utilities"],
-    "lang": "ru",
-    "dir": "ltr",
-    "scope": "/",
-    "screenshots": [
-        {
-            "src": "screenshots/screenshot1.png",
-            "sizes": "1280x720",
-            "type": "image/png",
-            "form_factor": "wide"
-        }
-    ]
+  "name": "SupTemiz — Клининг Северного Кипра",
+  "short_name": "SupTemiz",
+  "description": "Профессиональная уборка в Северном Кипре",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2E7D32",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "icons/icon-128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "icons/icon-144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "icons/icon-152.png", "sizes": "152x152", "type": "image/png" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-384.png", "sizes": "384x384", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
 }
