@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#2E7D32">
-    <title>SupTemiz - Клининг Северный Кипр</title>
+    <title>SupTemiz - Клининг</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding-bottom: 80px; }
         .app-container { max-width: 500px; margin: 0 auto; background: #f5f5f5; min-height: 100vh; }
-        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 100; }
+        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; }
         .logo { font-size: 22px; font-weight: 700; }
         .accent { color: #2E7D32; }
         .role-badge { background: #f0f0f0; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-        .lang-switcher { display: flex; gap: 8px; }
-        .lang-btn { background: none; border: 1px solid #ddd; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
-        .lang-btn.active { background: #2E7D32; border-color: #2E7D32; color: white; }
         .promo-banner { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 10px 16px; margin: 12px; border-radius: 12px; font-size: 14px; }
         .main-nav { display: flex; background: white; margin: 12px; border-radius: 16px; padding: 4px; gap: 4px; }
         .nav-tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; cursor: pointer; font-weight: 500; }
@@ -47,25 +43,23 @@
         .toast-message.show { opacity: 1; }
         .admin-fab { position: fixed; bottom: 20px; right: 20px; background: #333; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 200; font-size: 24px; }
         .admin-order-item { border-bottom: 1px solid #ddd; padding: 12px; margin-bottom: 8px; }
-        .sync-status { font-size: 10px; color: #999; text-align: center; padding: 4px; }
-        details { margin-top: 8px; }
-        summary { font-size: 11px; color: #666; cursor: pointer; }
+        .sync-status { font-size: 11px; color: #666; text-align: center; padding: 4px; background: #f0f0f0; margin: 8px; border-radius: 20px; }
+        .refresh-btn { background: #2E7D32; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; }
     </style>
 </head>
- <body>
+<body>
     <div class="app-container">
         <header>
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
             <div><span class="role-badge" id="roleBadge">👤 Клиент</span></div>
-            <div class="lang-switcher">
-                <button class="lang-btn active" data-lang="ru">RU</button>
-                <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="tr">TR</button>
-            </div>
         </header>
 
         <div class="promo-banner">🎉 Первая уборка со скидкой 20%</div>
-        <div class="sync-status" id="syncStatus">🔄 Синхронизация...</div>
+        
+        <div class="sync-status" id="syncStatus">
+            🔄 Загрузка... 
+            <button class="refresh-btn" onclick="syncAllOrders()">Обновить</button>
+        </div>
 
         <nav class="main-nav">
             <button class="nav-tab active" data-tab="order">📋 Заказ</button>
@@ -126,14 +120,14 @@
                 <input type="email" id="userEmail" placeholder="Email" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
-            <div class="card"><h4>📞 Контакты поддержки</h4>
+            <div class="card"><h4>📞 Контакты</h4>
                 <p>WhatsApp: +90 533 888 88 88</p>
                 <p>Telegram: @suptemiz_bot</p>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно регистрации -->
+    <!-- Регистрация -->
     <div id="registerModal" class="modal"><div class="modal-content"><h3>📝 Заполните профиль</h3>
         <p style="margin-bottom:12px; color:#666;">Для заказа нужны ваши контакты</p>
         <input type="text" id="modalName" placeholder="Ваше имя">
@@ -155,66 +149,82 @@
     <script>
         // ========== TELEGRAM НАСТРОЙКИ ==========
         const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
-        const ADMIN_CHAT_ID = '897174464';  // Ваш Telegram ID для уведомлений
+        const ADMIN_CHAT_ID = '897174464';
         
+        let allOrders = [];
         let currentRole = 'client';
-        let allOrders = []; // Все заказы из Telegram
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // ========== ЗАГРУЗКА ЗАКАЗОВ ИЗ TELEGRAM ==========
-        async function loadOrdersFromTelegram() {
+        // Загрузка заказов из Telegram
+        async function syncAllOrders() {
+            document.getElementById('syncStatus').innerHTML = '🔄 Синхронизация... <button class="refresh-btn" onclick="syncAllOrders()">Обновить</button>';
+            
             try {
+                // Получаем историю сообщений
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-100`);
                 const data = await response.json();
                 
                 if (data.ok && data.result) {
                     const ordersFromMessages = [];
+                    
                     for (const update of data.result) {
                         if (update.message && update.message.text) {
                             const text = update.message.text;
-                            if (text.includes('НОВЫЙ ЗАКАЗ SupTemiz!')) {
-                                const order = parseOrderFromMessage(text, update.message.date);
+                            
+                            // Парсим новый заказ
+                            if (text.includes('🆔 ID:')) {
+                                const order = parseOrder(text, update.message.date);
                                 if (order && !ordersFromMessages.find(o => o.id === order.id)) {
                                     ordersFromMessages.push(order);
                                 }
                             }
-                            // Также обрабатываем обновления статусов
+                            
+                            // Парсим обновление статуса
                             if (text.includes('ОБНОВЛЕНИЕ СТАТУСА')) {
-                                const statusUpdate = parseStatusUpdate(text);
-                                if (statusUpdate) {
-                                    updateOrderInStorage(statusUpdate);
+                                const statusData = parseStatusUpdate(text);
+                                if (statusData) {
+                                    const existingOrder = ordersFromMessages.find(o => o.id === statusData.orderId);
+                                    if (existingOrder) {
+                                        existingOrder.status = statusData.newStatus;
+                                    }
                                 }
                             }
                         }
                     }
                     
                     if (ordersFromMessages.length > 0) {
-                        // Сохраняем заказы в localStorage
-                        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                        const mergedOrders = [...ordersFromMessages, ...existingOrders];
-                        const uniqueOrders = mergedOrders.filter((order, index, self) => 
-                            index === self.findIndex(o => o.id === order.id)
-                        );
-                        uniqueOrders.sort((a,b) => b.id - a.id);
-                        localStorage.setItem('orders', JSON.stringify(uniqueOrders));
-                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано с Telegram';
+                        // Сохраняем в localStorage
+                        let savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        for (const newOrder of ordersFromMessages) {
+                            const existingIndex = savedOrders.findIndex(o => o.id === newOrder.id);
+                            if (existingIndex === -1) {
+                                savedOrders.push(newOrder);
+                            } else {
+                                savedOrders[existingIndex] = newOrder;
+                            }
+                        }
+                        savedOrders.sort((a,b) => b.id - a.id);
+                        localStorage.setItem('orders', JSON.stringify(savedOrders));
+                        allOrders = savedOrders;
+                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
+                    } else {
+                        allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
                     }
+                } else {
+                    allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                    document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
                 }
-                loadHistory();
-                loadAdminOrders();
             } catch(e) {
-                console.log('Ошибка загрузки из Telegram:', e);
-                document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим';
+                console.log('Ошибка:', e);
+                allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                document.getElementById('syncStatus').innerHTML = '⚠️ Ошибка соединения <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
             }
+            
+            loadHistory();
+            loadAdminOrders();
         }
 
-        function parseOrderFromMessage(text, timestamp) {
+        function parseOrder(text, timestamp) {
             const idMatch = text.match(/🆔 ID: (\d+)/);
             const nameMatch = text.match(/👤 Клиент: (.+)/);
             const phoneMatch = text.match(/📞 Телефон: (.+)/);
@@ -229,14 +239,13 @@
                     date: new Date(timestamp * 1000).toISOString(),
                     userName: nameMatch[1],
                     userPhone: phoneMatch[1],
-                    district: districtMatch ? districtMatch[1] : '',
-                    address: addressMatch ? addressMatch[1] : '',
-                    service: serviceMatch ? serviceMatch[1] : '',
+                    district: districtMatch ? districtMatch[1].replace('📍 ', '') : '',
+                    address: addressMatch ? addressMatch[1].replace('🏠 ', '') : '',
+                    service: serviceMatch ? serviceMatch[1].replace('🧹 ', '') : '',
                     total: priceMatch ? parseInt(priceMatch[1]) : 0,
                     status: 'Ожидает подтверждения',
                     orderDate: new Date().toISOString().split('T')[0],
-                    orderTime: '09:00 - 12:00',
-                    extras: 'Нет'
+                    orderTime: '09:00 - 12:00'
                 };
             }
             return null;
@@ -244,88 +253,61 @@
 
         function parseStatusUpdate(text) {
             const idMatch = text.match(/Заказ #(\d+)/);
-            const statusMatch = text.match(/Новый статус: (.+?)(?:\n|$)/);
+            const statusMatch = text.match(/Новый статус: (.+)/);
             if (idMatch && statusMatch) {
                 return { orderId: parseInt(idMatch[1]), newStatus: statusMatch[1] };
             }
             return null;
         }
 
-        function updateOrderInStorage(update) {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const index = orders.findIndex(o => o.id === update.orderId);
-            if (index !== -1) {
-                orders[index].status = update.newStatus;
-                localStorage.setItem('orders', JSON.stringify(orders));
-            }
-        }
-
-        // ========== ОТПРАВКА В TELEGRAM ==========
-        async function sendTelegramMessage(text, chatId = ADMIN_CHAT_ID) {
+        // Отправка в Telegram
+        async function sendToTelegram(text) {
             try {
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: text })
+                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: text })
                 });
-                const data = await response.json();
-                if (!data.ok) console.log('Ошибка Telegram:', data.description);
-                return data.ok;
-            } catch(e) { console.log('Ошибка:', e); return false; }
+                return await response.json();
+            } catch(e) {
+                console.log('Ошибка:', e);
+                return null;
+            }
         }
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
-        function calculateTotal() {
-            let total = document.querySelector('input[name="service"]:checked').value === 'standard' ? 500 :
-                        document.querySelector('input[name="service"]:checked').value === 'general' ? 950 :
-                        document.querySelector('input[name="service"]:checked').value === 'after_repair' ? 1800 : 700;
-            if (document.getElementById('extra_ac').checked) total += 200;
-            if (document.getElementById('extra_window').checked) total += 150;
-            if (document.getElementById('extra_fridge').checked) total += 100;
-            document.getElementById('totalPrice').innerHTML = total + ' ₺';
-            return total;
-        }
-
-        function getStatusConfig(status) {
-            const configs = {
-                'Ожидает подтверждения': { label: '⏳ Ожидает', color: '#999' },
-                'Подтверждён': { label: '✅ Подтверждён', color: '#2196F3' },
-                'Назначен клинер': { label: '👨‍🔧 Назначен клинер', color: '#9C27B0' },
-                'Клинер выехал': { label: '🚗 Выехал', color: '#FF9800' },
-                'Уборка началась': { label: '🧹 Уборка', color: '#FF5722' },
-                'Уборка завершена': { label: '✅ Завершена', color: '#4CAF50' },
-                'Завершён': { label: '⭐ Завершён', color: '#2E7D32' },
-                'Отменён клиентом': { label: '❌ Отменён', color: '#f44336' },
-                'Отменён администратором': { label: '❌ Отменён', color: '#f44336' }
-            };
-            return configs[status] || { label: status, color: '#999' };
-        }
-
+        // Обновление статуса
         async function updateOrderStatus(orderId, newStatus, updatedBy) {
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const orderIndex = orders.findIndex(o => o.id === orderId);
-            if (orderIndex !== -1) {
-                const oldStatus = orders[orderIndex].status;
-                orders[orderIndex].status = newStatus;
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                const oldStatus = order.status;
+                order.status = newStatus;
                 localStorage.setItem('orders', JSON.stringify(orders));
+                allOrders = orders;
                 
                 const message = `📢 ОБНОВЛЕНИЕ СТАТУСА ЗАКАЗА!
 ━━━━━━━━━━━━━━━━━━━━━
-🆔 Заказ #${orderId}
-👤 Клиент: ${orders[orderIndex].userName}
-📞 Телефон: ${orders[orderIndex].userPhone}
-🧹 Услуга: ${orders[orderIndex].service}
+🆔 Заказ #${order.id}
+👤 Клиент: ${order.userName}
+📞 Телефон: ${order.userPhone}
+🧹 Услуга: ${order.service}
+💰 Сумма: ${order.total} ₺
+━━━━━━━━━━━━━━━━━━━━━
 📌 Старый статус: ${oldStatus}
 ✨ Новый статус: ${newStatus}
-👨‍💼 Обновил: ${updatedBy}`;
+👨‍💼 Обновил: ${updatedBy}
+━━━━━━━━━━━━━━━━━━━━━
+⏰ ${new Date().toLocaleString('ru-RU')}`;
                 
-                await sendTelegramMessage(message);
-                showToast(`Статус изменён на "${newStatus}"`);
+                await sendToTelegram(message);
+                showToast(`✅ Статус изменён на "${newStatus}"`);
                 loadHistory();
                 loadAdminOrders();
             }
         }
 
+        // Создание заказа
         async function saveOrder() {
             const name = localStorage.getItem('userName');
             const phone = localStorage.getItem('userPhone');
@@ -352,10 +334,13 @@
                 userPhone: phone
             };
             
+            // Сохраняем локально
             const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             orders.unshift(order);
             localStorage.setItem('orders', JSON.stringify(orders));
+            allOrders = orders;
             
+            // Отправляем в Telegram
             const message = `🚨 НОВЫЙ ЗАКАЗ SupTemiz!
 ━━━━━━━━━━━━━━━━━━━━━
 🆔 ID: ${order.id}
@@ -369,10 +354,16 @@
 💰 ${order.total} ₺
 ━━━━━━━━━━━━━━━━━━━━━`;
             
-            await sendTelegramMessage(message);
-            showToast('✅ Заказ оформлен!');
+            const result = await sendToTelegram(message);
+            if (result && result.ok) {
+                showToast('✅ Заказ создан и отправлен!');
+            } else {
+                showToast('✅ Заказ сохранён локально');
+            }
+            
             loadHistory();
             
+            // Очистка формы
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
@@ -387,21 +378,47 @@
             return extras.join(', ') || 'Нет';
         }
 
+        function calculateTotal() {
+            let total = 500;
+            const service = document.querySelector('input[name="service"]:checked').value;
+            if (service === 'general') total = 950;
+            if (service === 'after_repair') total = 1800;
+            if (service === 'office') total = 700;
+            if (document.getElementById('extra_ac').checked) total += 200;
+            if (document.getElementById('extra_window').checked) total += 150;
+            if (document.getElementById('extra_fridge').checked) total += 100;
+            document.getElementById('totalPrice').innerHTML = total + ' ₺';
+            return total;
+        }
+
+        function getStatusConfig(status) {
+            const configs = {
+                'Ожидает подтверждения': { label: '⏳ Ожидает', color: '#999' },
+                'Подтверждён': { label: '✅ Подтверждён', color: '#2196F3' },
+                'Клинер выехал': { label: '🚗 Выехал', color: '#FF9800' },
+                'Уборка началась': { label: '🧹 Уборка', color: '#FF5722' },
+                'Уборка завершена': { label: '✅ Готово', color: '#4CAF50' },
+                'Завершён': { label: '⭐ Завершён', color: '#2E7D32' },
+                'Отменён': { label: '❌ Отменён', color: '#f44336' }
+            };
+            return configs[status] || { label: status, color: '#999' };
+        }
+
         function loadHistory() {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             const userPhone = localStorage.getItem('userPhone');
-            const filtered = currentRole === 'client' ? orders.filter(o => o.userPhone === userPhone) : orders;
-            const container = document.getElementById('historyList');
+            const myOrders = currentRole === 'client' ? 
+                allOrders.filter(o => o.userPhone === userPhone) : 
+                allOrders;
             
-            if (filtered.length === 0) {
+            const container = document.getElementById('historyList');
+            if (myOrders.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
                 return;
             }
             
-            container.innerHTML = filtered.map(order => {
+            container.innerHTML = myOrders.map(order => {
                 const config = getStatusConfig(order.status);
                 const canCancel = (currentRole === 'client' && order.status === 'Ожидает подтверждения' && order.userPhone === localStorage.getItem('userPhone'));
-                const canUpdate = currentRole !== 'client';
                 
                 return `
                     <div class="history-item">
@@ -410,27 +427,17 @@
                         ${order.service}<br>
                         <small>${order.address}</small><br>
                         <span class="status-badge" style="background: ${config.color};">${config.label}</span>
-                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён клиентом', '${order.userName}')">❌ Отменить заказ</button></div>` : ''}
-                        ${canUpdate ? `
-                            <div class="status-actions">
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Назначен клинер', 'Админ')">👨‍🔧 Назначить клинера</button>
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать уборку</button>
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Завершить уборку</button>
-                                <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить заказ</button>
-                            </div>
-                        ` : ''}
+                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
                     </div>
                 `;
             }).join('');
         }
 
         function loadAdminOrders() {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             const container = document.getElementById('adminOrdersList');
-            if (orders.length === 0) { container.innerHTML = '<p>Нет заказов</p>'; return; }
-            container.innerHTML = orders.map(order => `
+            if (allOrders.length === 0) { container.innerHTML = '<p>Нет заказов</p>'; return; }
+            
+            container.innerHTML = allOrders.map(order => `
                 <div class="admin-order-item">
                     <strong>${order.userName}</strong> | ${order.userPhone}<br>
                     ${order.service} | ${order.total} ₺<br>
@@ -438,9 +445,11 @@
                     <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
                     <div class="status-actions">
                         <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Назначен клинер', 'Админ')">👨‍🔧 Назначить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
                         <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
-                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён администратором', 'Админ')">❌ Отменить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
                     </div>
                 </div>
             `).join('');
@@ -450,9 +459,23 @@
             const phone = localStorage.getItem('userPhone');
             const isAdmin = phone === '0852159181';
             const isCleaner = phone === '05331234567';
-            if (isAdmin) { currentRole = 'admin'; document.getElementById('roleBadge').innerHTML = '👑 Админ'; document.getElementById('adminFab').style.display = 'flex'; }
-            else if (isCleaner) { currentRole = 'cleaner'; document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; document.getElementById('adminFab').style.display = 'flex'; }
-            else { currentRole = 'client'; document.getElementById('roleBadge').innerHTML = '👤 Клиент'; document.getElementById('adminFab').style.display = 'none'; }
+            
+            if (isAdmin) { 
+                currentRole = 'admin'; 
+                document.getElementById('roleBadge').innerHTML = '👑 Админ'; 
+                document.getElementById('adminFab').style.display = 'flex';
+                document.getElementById('syncStatus').style.display = 'block';
+            } else if (isCleaner) { 
+                currentRole = 'cleaner'; 
+                document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; 
+                document.getElementById('adminFab').style.display = 'flex';
+                document.getElementById('syncStatus').style.display = 'block';
+            } else { 
+                currentRole = 'client'; 
+                document.getElementById('roleBadge').innerHTML = '👤 Клиент'; 
+                document.getElementById('adminFab').style.display = 'none';
+                document.getElementById('syncStatus').style.display = 'block';
+            }
             loadHistory();
         }
 
@@ -469,6 +492,14 @@
             localStorage.setItem('userEmail', document.getElementById('userEmail').value);
             checkRole();
             showToast('✅ Профиль сохранён!');
+            syncAllOrders();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
         function showRegisterModal(callback) {
@@ -509,12 +540,11 @@
         
         calculateTotal();
         loadProfile();
-        loadHistory();
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
         
-        // Загружаем заказы из Telegram при старте
-        loadOrdersFromTelegram();
-        setInterval(loadOrdersFromTelegram, 30000); // Каждые 30 секунд
+        // Загружаем заказы
+        syncAllOrders();
+        setInterval(syncAllOrders, 30000);
     </script>
 </body>
 </html>
