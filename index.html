@@ -6,133 +6,87 @@
     <meta name="theme-color" content="#2E7D32">
     <title>SupTemiz — Клининг Северного Кипра</title>
     
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-192.png">
 </head>
 <body>
     <div class="app-container">
-        <header>
+        <header class="glass-header">
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
-            <div class="header-right">
-                <span class="role-badge" id="roleBadge">👤 Клиент</span>
-                <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">🌙</button>
+            <div class="header-controls">
+                <select id="langSelect" class="lang-select">
+                    <option value="ru">🇷🇺 RU</option>
+                    <option value="tr">🇹🇷 TR</option>
+                    <option value="en">🇬🇧 EN</option>
+                </select>
+                <button id="themeToggle" class="icon-btn">🌙</button>
             </div>
         </header>
 
-        <div class="promo-banner">🎉 Первая уборка со скидкой 20%</div>
-        <div class="sync-status" id="syncStatus">🟢 Онлайн синхронизация</div>
+        <div class="promo-banner glass">🎉 Первая уборка — скидка 25% для новых клиентов!</div>
 
-        <nav class="main-nav">
-            <button class="nav-tab active" data-tab="order">📋 Заказ</button>
-            <button class="nav-tab" data-tab="history">📜 История</button>
-            <button class="nav-tab" data-tab="profile">👤 Профиль</button>
+        <nav class="bottom-nav glass">
+            <button class="nav-btn active" data-tab="order">📋<span>Заказ</span></button>
+            <button class="nav-btn" data-tab="history">📜<span>История</span></button>
+            <button class="nav-btn" data-tab="profile">👤<span>Профиль</span></button>
         </nav>
 
-        <!-- Вкладка Заказ -->
+        <!-- TAB: ORDER -->
         <div id="order-tab" class="tab-content active">
-            <!-- Карточки будут стилизованы через CSS -->
-            <div class="card">
-                <h3>📍 Ваш район</h3>
-                <select id="district" class="form-select">
-                    <option value="lefkosa">Лефкоша (Никосия)</option>
-                    <option value="girne" selected>Гирне (Кирения)</option>
-                    <option value="gazimagusa">Газимагуса (Фамагуста)</option>
-                    <option value="iskele">Искеле</option>
-                    <option value="guzelyurt">Гюзельюрт</option>
-                </select>
-                <input type="text" id="address" placeholder="Улица, дом, квартира" class="form-input">
+            <div class="card glass">
+                <h3 data-lang="district">📍 Ваш район</h3>
+                <select id="district" class="input"></select>
+                <input type="text" id="address" class="input" placeholder="Полный адрес">
             </div>
 
-            <div class="card">
-                <h3>🧹 Тип уборки</h3>
-                <div class="service-grid">
-                    <label class="service-option">
-                        <input type="radio" name="service" value="standard" checked>
-                        <div class="service-info"><strong>Стандартная</strong><small>1-2 комнаты</small></div>
-                        <span class="price">500 ₺</span>
-                    </label>
-                    <label class="service-option">
-                        <input type="radio" name="service" value="general">
-                        <div class="service-info"><strong>Генеральная</strong></div>
-                        <span class="price">950 ₺</span>
-                    </label>
-                    <label class="service-option">
-                        <input type="radio" name="service" value="after_repair">
-                        <div class="service-info"><strong>После ремонта</strong></div>
-                        <span class="price">1800 ₺</span>
-                    </label>
-                    <label class="service-option">
-                        <input type="radio" name="service" value="office">
-                        <div class="service-info"><strong>Офисная</strong></div>
-                        <span class="price">700 ₺</span>
-                    </label>
+            <div class="card glass">
+                <h3 data-lang="rooms">🏠 Количество комнат + площадь</h3>
+                <div class="flex-row">
+                    <select id="rooms" class="input"></select>
+                    <input type="number" id="area" class="input" placeholder="м²" min="30">
                 </div>
             </div>
 
-            <div class="card">
-                <h3>✨ Дополнительно</h3>
-                <label class="extra-option">
-                    <input type="checkbox" id="extra_ac"> Чистка кондиционера <span class="price">+200 ₺</span>
-                </label>
-                <label class="extra-option">
-                    <input type="checkbox" id="extra_window"> Мойка окон <span class="price">+150 ₺</span>
-                </label>
-                <label class="extra-option">
-                    <input type="checkbox" id="extra_fridge"> Чистка холодильника <span class="price">+100 ₺</span>
-                </label>
+            <div class="card glass">
+                <h3 data-lang="service_type">🧹 Тип уборки</h3>
+                <!-- service options with radio -->
+                <div id="serviceOptions" class="grid-options"></div>
             </div>
 
-            <div class="card">
-                <h3>📅 Дата и время</h3>
-                <input type="date" id="date" class="form-input">
-                <select id="time" class="form-select">
-                    <option>09:00 - 12:00</option>
-                    <option>12:00 - 15:00</option>
-                    <option>15:00 - 18:00</option>
-                    <option>18:00 - 21:00</option>
-                </select>
+            <div class="card glass">
+                <h3 data-lang="extras">✨ Дополнительные услуги</h3>
+                <div id="extrasContainer" class="extras-grid"></div>
             </div>
 
-            <div class="card total-card">
-                <div class="total-row">
-                    <span>Итого:</span>
-                    <span id="totalPrice" class="total-price">500 ₺</span>
-                </div>
+            <div class="card glass">
+                <h3 data-lang="datetime">📅 Дата и время</h3>
+                <input type="date" id="date" class="input">
+                <select id="time" class="input"></select>
             </div>
 
-            <button class="btn-primary" id="orderBtn">📞 Оформить заказ</button>
+            <div class="total-bar glass">
+                <div>Итого: <span id="totalPrice" class="total">650 ₺</span></div>
+                <button id="orderBtn" class="btn-primary">Оформить заказ</button>
+            </div>
         </div>
 
-        <!-- История -->
+        <!-- TAB: HISTORY -->
         <div id="history-tab" class="tab-content">
-            <div id="historyList" class="history-list"></div>
+            <div id="historyList" class="list-container"></div>
         </div>
 
-        <!-- Профиль -->
+        <!-- TAB: PROFILE -->
         <div id="profile-tab" class="tab-content">
-            <div class="card">
-                <div class="avatar">👤</div>
-                <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
-                <input type="tel" id="userPhone" placeholder="Телефон (+90 ...)" class="form-input">
-                <input type="email" id="userEmail" placeholder="Email (необязательно)" class="form-input">
-                <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
-            </div>
-            <div class="card">
-                <h4>📞 Контакты поддержки</h4>
-                <p>WhatsApp: +90 533 888 88 88</p>
-            </div>
+            <!-- Profile card + admin button -->
         </div>
     </div>
 
-    <!-- Модальные окна и Toast -->
-    <div id="registerModal" class="modal">...</div> <!-- можешь оставить как было или упростить -->
-    <div id="adminModal" class="modal">...</div>
-    <div id="toast" class="toast-message"></div>
-    <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
+    <div id="toast" class="toast"></div>
+    <div id="adminPanel" class="modal">...</div>
 
     <script src="app.js" defer></script>
 </body>
