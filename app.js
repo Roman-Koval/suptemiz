@@ -73,11 +73,11 @@ const translations = {
 
 let currentLang = 'ru';
 
-// ========== ТЕЛЕГРАМ НАСТРОЙКИ (ИСПРАВЛЕНО) ==========
+// ========== ТЕЛЕГРАМ НАСТРОЙКИ (ВСТАВЬТЕ НОВЫЙ ТОКЕН) ==========
 const BOT_TOKEN = '8776328263:AAFW4TPDyi1CwnbprZ-S1I2Mj9bXUDL0vv8';
 const CHAT_ID = '897174464';
 
-// ========== РАСЧЁТ ЦЕНЫ (ИСПРАВЛЕНО) ==========
+// ========== РАСЧЁТ ЦЕНЫ ==========
 function calculateTotal() {
     let total = 0;
     const selectedService = document.querySelector('input[name="service"]:checked');
@@ -100,7 +100,6 @@ function calculateTotal() {
     return total;
 }
 
-// ========== ПОЛУЧИТЬ ТЕКСТ УСЛУГИ (ИСПРАВЛЕНО) ==========
 function getSelectedServiceText() {
     const selected = document.querySelector('input[name="service"]:checked');
     if (!selected) return 'Стандартная';
@@ -109,7 +108,6 @@ function getSelectedServiceText() {
     return strong ? strong.innerText : 'Стандартная';
 }
 
-// ========== ПОЛУЧИТЬ ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ ==========
 function getExtras() {
     const extras = [];
     if (document.getElementById('extra_ac')?.checked) extras.push('Чистка кондиционера');
@@ -118,7 +116,6 @@ function getExtras() {
     return extras.join(', ') || 'Нет';
 }
 
-// ========== ОЧИСТИТЬ ФОРМУ ==========
 function clearForm() {
     const addressInput = document.getElementById('address');
     if (addressInput) addressInput.value = '';
@@ -137,7 +134,6 @@ function clearForm() {
     }
 }
 
-// ========== ОТПРАВКА В ТЕЛЕГРАМ (ИСПРАВЛЕНО) ==========
 function sendToTelegram(order) {
     const message = `🚨 НОВЫЙ ЗАКАЗ SUP TEMIZ!
 ━━━━━━━━━━━━━━━━━━━━━
@@ -174,7 +170,6 @@ function sendToTelegram(order) {
     .catch(err => console.log('❌ Ошибка отправки:', err));
 }
 
-// ========== СОХРАНЕНИЕ ЗАКАЗА ==========
 function saveOrder() {
     const name = localStorage.getItem('userName') || document.getElementById('userName')?.value || '';
     const phone = localStorage.getItem('userPhone') || document.getElementById('userPhone')?.value || '';
@@ -210,12 +205,10 @@ function saveOrder() {
         paymentMethod: 'Наличные'
     };
     
-    // Сохраняем в localStorage
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.unshift(order);
     localStorage.setItem('orders', JSON.stringify(orders));
     
-    // Отправляем уведомление
     sendToTelegram(order);
     
     showToast(translations[currentLang].order_confirmed);
@@ -224,7 +217,6 @@ function saveOrder() {
     return true;
 }
 
-// ========== ЗАГРУЗКА ИСТОРИИ ==========
 function loadHistory() {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const container = document.getElementById('historyList');
@@ -245,7 +237,6 @@ function loadHistory() {
     `).join('');
 }
 
-// ========== ПОВТОРИТЬ ЗАКАЗ ==========
 function repeatOrder(orderId) {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     const order = orders.find(o => o.id === orderId);
@@ -268,7 +259,6 @@ function repeatOrder(orderId) {
     }
 }
 
-// ========== ЗАГРУЗКА ПРОФИЛЯ ==========
 function loadProfile() {
     const nameInput = document.getElementById('userName');
     const phoneInput = document.getElementById('userPhone');
@@ -279,7 +269,6 @@ function loadProfile() {
     if (emailInput) emailInput.value = localStorage.getItem('userEmail') || '';
 }
 
-// ========== СОХРАНЕНИЕ ПРОФИЛЯ ==========
 function saveProfile() {
     const name = document.getElementById('userName')?.value || '';
     const phone = document.getElementById('userPhone')?.value || '';
@@ -295,7 +284,6 @@ function saveProfile() {
     }
 }
 
-// ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
 function initTabs() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
@@ -318,7 +306,6 @@ function initTabs() {
     });
 }
 
-// ========== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА ==========
 function setLanguage(lang) {
     currentLang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -333,7 +320,6 @@ function setLanguage(lang) {
     }
 }
 
-// ========== ПОКАЗ СООБЩЕНИЯ ==========
 function showToast(message) {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -342,7 +328,6 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ ==========
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 SupTemiz загружен!');
     
@@ -351,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
     calculateTotal();
     
-    // Слушатели изменения цены
     const serviceRadios = document.querySelectorAll('input[name="service"]');
     serviceRadios.forEach(el => el.addEventListener('change', calculateTotal));
     
@@ -361,14 +345,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('change', calculateTotal);
     });
     
-    // Кнопки
     const orderBtn = document.getElementById('orderBtn');
     if (orderBtn) orderBtn.addEventListener('click', saveOrder);
     
     const saveProfileBtn = document.getElementById('saveProfileBtn');
     if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveProfile);
     
-    // Переключение языка
     const langBtns = document.querySelectorAll('.lang-btn');
     langBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -378,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Устанавливаем сегодняшнюю дату
     const dateInput = document.getElementById('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
