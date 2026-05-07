@@ -1,116 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Генератор иконок для TemizYap</title>
+    <meta charset="UTF-8">
+    <title>Генератор иконок SupTemiz</title>
     <style>
-        body { font-family: Arial; padding: 20px; text-align: center; }
-        canvas { margin: 20px; border: 1px solid #ddd; }
-        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; background: #2E7D32; color: white; border: none; border-radius: 8px; }
-        .download-links { margin-top: 20px; }
-        .download-links a { display: inline-block; margin: 5px; padding: 8px 16px; background: #2196F3; color: white; text-decoration: none; border-radius: 6px; }
+        body { font-family: system-ui; padding: 20px; text-align: center; background: #f5f7fb; }
+        canvas { margin: 20px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        button { padding: 12px 24px; background: #2E7D32; color: white; border: none; border-radius: 40px; font-size: 16px; cursor: pointer; }
+        .links a { display: inline-block; margin: 8px; padding: 8px 16px; background: #2196F3; color: white; text-decoration: none; border-radius: 32px; font-size: 14px; }
     </style>
 </head>
 <body>
-    <h1>🎨 Генератор иконок для TemizYap</h1>
-    <canvas id="iconCanvas" width="512" height="512"></canvas>
-    <br>
-    <button onclick="generateIcons()">🎨 Сгенерировать все иконки</button>
-    
-    <div class="download-links" id="downloadLinks"></div>
-    
+    <h1>🎨 Сгенерируйте иконки для SupTemiz</h1>
+    <canvas id="iconCanvas" width="512" height="512"></canvas><br>
+    <button onclick="generateIcons()">📱 Создать и скачать все иконки</button>
+    <div id="links" style="margin-top: 20px;"></div>
     <script>
         const canvas = document.getElementById('iconCanvas');
         const ctx = canvas.getContext('2d');
-        
-        // Рисуем иконку
         function drawIcon() {
-            // Градиентный фон
-            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-            gradient.addColorStop(0, '#2E7D32');
-            gradient.addColorStop(1, '#1B5E20');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 512, 512);
-            
-            // Белая щётка/метла
-            ctx.fillStyle = 'white';
-            
-            // Ручка метлы
-            ctx.fillRect(200, 150, 112, 40);
-            ctx.fillRect(250, 190, 40, 200);
-            
-            // Ворс метлы
-            ctx.fillStyle = '#FFD54F';
-            for(let i = 0; i < 12; i++) {
-                ctx.fillRect(240 + i*5, 380, 4, 60);
-            }
-            
-            // Звёздочка чистоты
+            const grad = ctx.createLinearGradient(0,0,512,512);
+            grad.addColorStop(0, '#2E7D32');
+            grad.addColorStop(1, '#1B5E20');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,512,512);
             ctx.fillStyle = '#FFD700';
-            ctx.font = 'bold 80px Arial';
-            ctx.fillText('✨', 350, 120);
-            
-            // Круглый фон для буквы T
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.beginPath();
-            ctx.arc(130, 400, 60, 0, Math.PI * 2);
-            ctx.fill();
-            
+            ctx.font = 'bold 90px system-ui';
+            ctx.fillText('✨', 380, 100);
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 80px Arial';
-            ctx.fillText('T', 100, 430);
+            ctx.fillRect(200, 160, 120, 35);
+            ctx.fillRect(240, 195, 40, 180);
+            ctx.fillStyle = '#FFD54F';
+            for(let i=0;i<12;i++) ctx.fillRect(235 + i*5, 370, 4, 55);
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath(); ctx.arc(130, 400, 65, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 85px system-ui';
+            ctx.fillText('S', 95, 425);
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath(); ctx.arc(400, 420, 55, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 75px system-ui';
+            ctx.fillText('T', 385, 445);
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '50px system-ui';
+            ctx.fillText('★', 260, 470);
         }
-        
         drawIcon();
-        
         async function generateIcons() {
-            const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
-            const linksDiv = document.getElementById('downloadLinks');
-            linksDiv.innerHTML = '<h3>📥 Скачайте иконки:</h3>';
-            
+            const sizes = [72,96,128,144,152,192,384,512];
+            const linksDiv = document.getElementById('links');
+            linksDiv.innerHTML = '<h3>Скачайте каждую иконку и положите в папку icons/</h3><div class="links"></div>';
+            const container = linksDiv.querySelector('.links');
             for(const size of sizes) {
                 const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = size;
-                tempCanvas.height = size;
+                tempCanvas.width = tempCanvas.height = size;
                 const tempCtx = tempCanvas.getContext('2d');
-                
-                // Копируем основную иконку с масштабированием
-                tempCtx.drawImage(canvas, 0, 0, 512, 512, 0, 0, size, size);
-                
-                // Скачиваем
+                tempCtx.drawImage(canvas, 0,0,512,512, 0,0,size,size);
                 const link = document.createElement('a');
                 link.download = `icon-${size}.png`;
                 link.href = tempCanvas.toDataURL();
-                link.textContent = `icon-${size}.png (${size}x${size})`;
-                link.style.display = 'block';
-                link.style.margin = '5px';
-                linksDiv.appendChild(link);
+                link.textContent = `📐 ${size}x${size}`;
+                container.appendChild(link);
             }
-            
-            // Создаём favicon
             const favCanvas = document.createElement('canvas');
-            favCanvas.width = 64;
-            favCanvas.height = 64;
+            favCanvas.width = favCanvas.height = 64;
             const favCtx = favCanvas.getContext('2d');
-            favCtx.drawImage(canvas, 0, 0, 512, 512, 0, 0, 64, 64);
+            favCtx.drawImage(canvas, 0,0,512,512, 0,0,64,64);
             const favLink = document.createElement('a');
             favLink.download = 'favicon.ico';
             favLink.href = favCanvas.toDataURL('image/x-icon');
-            favLink.textContent = 'favicon.ico';
-            favLink.style.display = 'block';
-            linksDiv.appendChild(favLink);
-            
-            // Инструкция
-            linksDiv.innerHTML += `
-                <br>
-                <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px;">
-                    <strong>📁 Инструкция:</strong><br>
-                    1. Скачайте все иконки выше<br>
-                    2. Создайте папку <code>icons</code> в вашем проекте<br>
-                    3. Поместите все иконки в папку <code>icons</code><br>
-                    4. Переименуйте favicon.ico и положите в корень проекта<br>
-                    5. Обновите manifest.json, указав правильные пути
-                </div>
-            `;
+            favLink.textContent = '⭐ favicon.ico';
+            container.appendChild(favLink);
         }
     </script>
 </body>
