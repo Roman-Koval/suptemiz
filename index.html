@@ -3,50 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SupTemiz - Клининг Северный Кипр</title>
+    <meta name="theme-color" content="#2E7D32">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>SupTemiz — Клининг Северного Кипра</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: #f0f2f5; padding-bottom: 80px; }
-        .app-container { max-width: 500px; margin: 0 auto; background: #f0f2f5; min-height: 100vh; }
-        header { background: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 700; }
-        .accent { color: #2E7D32; }
-        .role-badge { background: #e8f5e9; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-        .promo-banner { background: linear-gradient(135deg, #2E7D32, #1B5E20); color: white; padding: 12px 16px; margin: 12px; border-radius: 12px; font-size: 14px; font-weight: 500; }
-        .main-nav { display: flex; background: white; margin: 12px; border-radius: 16px; padding: 4px; gap: 4px; }
-        .nav-tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; cursor: pointer; font-weight: 500; }
-        .nav-tab.active { background: #2E7D32; color: white; }
-        .tab-content { display: none; padding: 0 12px; }
-        .tab-content.active { display: block; }
-        .card { background: white; margin: 12px 0; padding: 18px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .form-select, .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-top: 8px; font-size: 16px; }
-        .service-option { display: flex; align-items: center; padding: 12px; margin: 8px 0; background: #f9f9f9; border-radius: 12px; cursor: pointer; }
-        .service-option input { margin-right: 12px; }
-        .price { margin-left: auto; color: #2E7D32; font-weight: 700; }
-        .extra-option { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
-        .extra-option input { margin-right: 12px; }
-        .btn-primary { width: 100%; padding: 16px; background: #2E7D32; color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; margin: 12px 0; }
-        .btn-secondary { width: 100%; padding: 12px; background: #e0e0e0; border: none; border-radius: 12px; cursor: pointer; font-weight: 500; }
-        .btn-small { padding: 6px 12px; background: #2E7D32; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 4px; font-size: 12px; }
-        .history-item { background: white; padding: 16px; border-radius: 12px; margin-bottom: 12px; }
-        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-top: 8px; color: white; }
-        .status-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-        .empty-state { text-align: center; padding: 48px; color: #999; }
-        .avatar { font-size: 64px; text-align: center; margin-bottom: 20px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 24px; padding: 28px; max-width: 340px; width: 90%; text-align: center; }
-        .modal-content input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; }
-        .modal-content button { width: 100%; padding: 12px; background: #2E7D32; color: white; border: none; border-radius: 12px; margin-top: 8px; cursor: pointer; }
-        .modal-close { background: #999 !important; }
-        .toast-message { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 40px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; font-size: 14px; }
-        .toast-message.show { opacity: 1; }
-        .admin-fab { position: fixed; bottom: 20px; right: 20px; background: #2E7D32; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 200; font-size: 24px; color: white; }
-        .admin-order-item { border-bottom: 1px solid #eee; padding: 12px; margin-bottom: 8px; }
-        .sync-status { font-size: 12px; text-align: center; padding: 6px; background: #fff3e0; margin: 8px; border-radius: 20px; }
-        .refresh-btn { background: #2E7D32; color: white; border: none; border-radius: 20px; padding: 3px 10px; font-size: 11px; cursor: pointer; margin-left: 8px; }
-        .order-id { font-size: 11px; color: #999; margin-top: 4px; }
-        h3 { font-size: 16px; margin-bottom: 8px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+            padding-bottom: 80px;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .accent {
+            color: #2E7D32;
+        }
+
+        .role-badge {
+            background: #e8f5e9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
+            color: white;
+            padding: 10px 16px;
+            margin: 16px 12px 0;
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .main-nav {
+            display: flex;
+            background: white;
+            margin: 12px;
+            border-radius: 16px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            background: #2E7D32;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 0 12px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            margin: 12px 0;
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        .service-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .service-option input {
+            margin-right: 12px;
+        }
+
+        .price {
+            margin-left: auto;
+            color: #2E7D32;
+            font-weight: 700;
+        }
+
+        .extra-option {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .extra-option input {
+            margin-right: 12px;
+        }
+
+        .extra-option .price {
+            margin-left: auto;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 12px 0;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 4px;
+            font-size: 12px;
+        }
+
+        .btn-small-outline {
+            background: white;
+            color: #2E7D32;
+            border: 1px solid #2E7D32;
+        }
+
+        .history-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+            color: white;
+        }
+
+        .status-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #999;
+        }
+
+        .avatar {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 340px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 12px;
+            color: #2E7D32;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .modal-close {
+            background: #999 !important;
+        }
+
+        .toast-message {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        .admin-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2E7D32;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+            font-size: 24px;
+            color: white;
+        }
+
+        .admin-order-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .sync-status {
+            font-size: 12px;
+            text-align: center;
+            padding: 6px;
+            margin: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .sync-status.online {
+            background: #e8f5e9;
+            color: #2E7D32;
+        }
+
+        .sync-status.offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .order-id {
+            font-size: 11px;
+            color: #999;
+            margin-top: 6px;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        h4 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -58,9 +378,9 @@
 
         <div class="promo-banner">🎉 Первая уборка со скидкой 20%</div>
 
-        <div class="sync-status" id="syncStatus">
-            🔄 Загрузка...
-            <button class="refresh-btn" onclick="syncFromCloud()">Обновить</button>
+        <div class="sync-status offline" id="syncStatus">
+            📡 Локальный режим
+            <button class="refresh-btn" onclick="loadOrdersFromLocal()" style="background:none;border:1px solid;border-radius:16px;padding:2px 8px;margin-left:8px;cursor:pointer;">Обновить</button>
         </div>
 
         <nav class="main-nav">
@@ -69,6 +389,7 @@
             <button class="nav-tab" data-tab="profile">👤 Профиль</button>
         </nav>
 
+        <!-- Вкладка Заказ -->
         <div id="order-tab" class="tab-content active">
             <div class="card">
                 <h3>📍 Ваш район</h3>
@@ -84,47 +405,89 @@
 
             <div class="card">
                 <h3>🧹 Тип уборки</h3>
-                <label class="service-option"><input type="radio" name="service" value="standard" checked> Стандартная <span class="price">500 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="general"> Генеральная <span class="price">950 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="after_repair"> После ремонта <span class="price">1800 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="office"> Офисная <span class="price">700 ₺</span></label>
+                <label class="service-option">
+                    <input type="radio" name="service" value="standard" checked>
+                    Стандартная
+                    <span class="price">500 ₺</span>
+                </label>
+                <label class="service-option">
+                    <input type="radio" name="service" value="general">
+                    Генеральная
+                    <span class="price">950 ₺</span>
+                </label>
+                <label class="service-option">
+                    <input type="radio" name="service" value="after_repair">
+                    После ремонта
+                    <span class="price">1800 ₺</span>
+                </label>
+                <label class="service-option">
+                    <input type="radio" name="service" value="office">
+                    Офисная
+                    <span class="price">700 ₺</span>
+                </label>
             </div>
 
             <div class="card">
                 <h3>✨ Дополнительно</h3>
-                <label class="extra-option"><input type="checkbox" id="extra_ac"> Чистка кондиционера <span class="price">+200 ₺</span></label>
-                <label class="extra-option"><input type="checkbox" id="extra_window"> Мойка окон <span class="price">+150 ₺</span></label>
-                <label class="extra-option"><input type="checkbox" id="extra_fridge"> Чистка холодильника <span class="price">+100 ₺</span></label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_ac">
+                    Чистка кондиционера
+                    <span class="price">+200 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_window">
+                    Мойка окон
+                    <span class="price">+150 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_fridge">
+                    Чистка холодильника
+                    <span class="price">+100 ₺</span>
+                </label>
             </div>
 
             <div class="card">
                 <h3>📅 Дата и время</h3>
-                <input type="date" id="date" class="form-input">
+                <input type="date" id="date" class="form-input" min="">
                 <select id="time" class="form-select">
-                    <option>09:00 - 12:00</option><option>12:00 - 15:00</option>
-                    <option>15:00 - 18:00</option><option>18:00 - 21:00</option>
+                    <option>09:00 - 12:00</option>
+                    <option>12:00 - 15:00</option>
+                    <option>15:00 - 18:00</option>
+                    <option>18:00 - 21:00</option>
                 </select>
             </div>
 
-            <div class="card"><h3>💰 Итого: <span id="totalPrice" style="color:#2E7D32;">500 ₺</span></h3></div>
+            <div class="card">
+                <h3>💰 Итого: <span id="totalPrice" style="color:#2E7D32;">500 ₺</span></h3>
+            </div>
+
             <button class="btn-primary" id="orderBtn">📞 Оформить заказ</button>
         </div>
 
-        <div id="history-tab" class="tab-content"><div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div></div>
+        <!-- Вкладка История -->
+        <div id="history-tab" class="tab-content">
+            <div id="historyList" class="history-list">
+                <div class="empty-state">📭 Нет заказов</div>
+            </div>
+        </div>
 
+        <!-- Вкладка Профиль -->
         <div id="profile-tab" class="tab-content">
-            <div class="card"><div class="avatar">👤</div>
+            <div class="card">
+                <div class="avatar">👤</div>
                 <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
-                <input type="tel" id="userPhone" placeholder="Телефон (например, 0533 123 45 67)" class="form-input">
+                <input type="tel" id="userPhone" placeholder="Телефон (0533 123 45 67)" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
-            <div class="card"><h4>📞 Контакты поддержки</h4>
+            <div class="card">
+                <h4>📞 Контакты поддержки</h4>
                 <p>WhatsApp: +90 533 888 88 88</p>
                 <p>Telegram: @suptemiz_bot</p>
             </div>
         </div>
     </div>
 
+    <!-- Модальное окно регистрации -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <h3>📝 Заполните профиль</h3>
@@ -136,6 +499,7 @@
         </div>
     </div>
 
+    <!-- Админ панель (только для определённых телефонов) -->
     <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
     <div id="adminModal" class="modal">
         <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
@@ -148,123 +512,51 @@
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // ========== GOOGLE SHEETS НАСТРОЙКА ==========
-        // ВАШ ID ТАБЛИЦЫ (скопирован из ссылки)
-        const GOOGLE_SHEET_ID = '1xCqMDGCcwz8g51WWcw8TX162wlWzrMNiCi1zlhNMNBU';
+        // ========== НАСТРОЙКИ ==========
+        // Роли определяются по номеру телефона
+        const ADMIN_PHONES = ['0852159181', '+905338888888'];
+        const CLEANER_PHONES = ['05331234567', '+905331234567'];
         
         let allOrders = [];
         let currentRole = 'client';
+        let currentUserPhone = '';
 
-        // Сохранение в Google Sheets через бесплатный сервис Sheet.best
-        async function syncFromCloud() {
-            document.getElementById('syncStatus').innerHTML = '🔄 Синхронизация...';
-            
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Нет даты';
             try {
-                // Пытаемся загрузить из Google Sheets (через JSONP обход CORS)
-                const script = document.createElement('script');
-                const callbackName = 'jsonpCallback_' + Date.now();
-                
-                window[callbackName] = (data) => {
-                    if (data && data.orders) {
-                        allOrders = data.orders;
-                        localStorage.setItem('orders', JSON.stringify(allOrders));
-                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано 🔄';
-                    } else {
-                        loadLocalOrders();
-                    }
-                    delete window[callbackName];
-                    document.head.removeChild(script);
-                    loadHistory();
-                    loadAdminOrders();
-                };
-                
-                script.src = `https://script.google.com/macros/s/AKfycbx9Xq4VkZxYzW3bN7cL8pQ1rS2tU3vW4xY5zA6/exec?callback=${callbackName}&sheetId=${GOOGLE_SHEET_ID}`;
-                document.head.appendChild(script);
-                
-                setTimeout(() => {
-                    if (window[callbackName]) {
-                        delete window[callbackName];
-                        loadLocalOrders();
-                        document.getElementById('syncStatus').innerHTML = '📋 Локальный режим 🔄';
-                        loadHistory();
-                        loadAdminOrders();
-                    }
-                }, 3000);
-            } catch(e) {
-                console.log('Ошибка:', e);
-                loadLocalOrders();
+                return new Date(dateString).toLocaleDateString('ru-RU');
+            } catch {
+                return dateString;
             }
         }
 
-        function loadLocalOrders() {
-            const saved = localStorage.getItem('orders');
-            allOrders = saved ? JSON.parse(saved) : [];
-            document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы 🔄';
-            loadHistory();
-            loadAdminOrders();
+        // ========== РАСЧЁТ ЦЕНЫ ==========
+        function calculateTotal() {
+            const service = document.querySelector('input[name="service"]:checked').value;
+            let total = { standard: 500, general: 950, after_repair: 1800, office: 700 }[service] || 500;
+            if (document.getElementById('extra_ac').checked) total += 200;
+            if (document.getElementById('extra_window').checked) total += 150;
+            if (document.getElementById('extra_fridge').checked) total += 100;
+            document.getElementById('totalPrice').innerHTML = total + ' ₺';
+            return total;
         }
 
-        async function saveToCloud() {
-            try {
-                await fetch(`https://script.google.com/macros/s/AKfycbx9Xq4VkZxYzW3bN7cL8pQ1rS2tU3vW4xY5zA6/exec`, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sheetId: GOOGLE_SHEET_ID, orders: allOrders })
-                });
-            } catch(e) {}
-        }
-
-        window.updateOrderStatus = async function(orderId, newStatus, updatedBy) {
-            const order = allOrders.find(o => o.id === orderId);
-            if (order) {
-                order.status = newStatus;
-                localStorage.setItem('orders', JSON.stringify(allOrders));
-                await saveToCloud();
-                showToast(`✅ Статус изменён на "${newStatus}"`);
-                syncFromCloud();
-            }
-        };
-
-        async function saveOrder() {
-            const name = localStorage.getItem('userName');
-            const phone = localStorage.getItem('userPhone');
-            const address = document.getElementById('address').value;
-            
-            if (!address) { showToast('Укажите адрес'); return; }
-            if (!name || !phone) { showRegisterModal(() => saveOrder()); return; }
-            
-            const order = {
-                id: Date.now(),
-                createdAt: new Date().toISOString(),
-                address: address,
-                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-                service: getSelectedServiceText(),
-                extras: getExtras(),
-                orderDate: document.getElementById('date').value,
-                orderTime: document.getElementById('time').value,
-                total: calculateTotal(),
-                status: 'Ожидает подтверждения',
-                userName: name,
-                userPhone: phone
-            };
-            
-            allOrders.unshift(order);
-            localStorage.setItem('orders', JSON.stringify(allOrders));
-            await saveToCloud();
-            showToast('✅ Заказ оформлен!');
-            syncFromCloud();
-            
-            document.getElementById('address').value = '';
-            document.getElementById('extra_ac').checked = false;
-            document.getElementById('extra_window').checked = false;
-            document.getElementById('extra_fridge').checked = false;
+        function getServiceText(serviceValue) {
+            const texts = { standard: 'Стандартная', general: 'Генеральная', after_repair: 'После ремонта', office: 'Офисная' };
+            return texts[serviceValue] || 'Стандартная';
         }
 
         function getSelectedServiceText() {
             const selected = document.querySelector('input[name="service"]:checked');
-            const texts = { standard: 'Стандартная', general: 'Генеральная', after_repair: 'После ремонта', office: 'Офисная' };
-            return texts[selected.value];
+            return getServiceText(selected.value);
         }
 
         function getExtras() {
@@ -273,15 +565,6 @@
             if (document.getElementById('extra_window').checked) extras.push('Окна');
             if (document.getElementById('extra_fridge').checked) extras.push('Холодильник');
             return extras.join(', ') || 'Нет';
-        }
-
-        function calculateTotal() {
-            let total = { standard: 500, general: 950, after_repair: 1800, office: 700 }[document.querySelector('input[name="service"]:checked').value];
-            if (document.getElementById('extra_ac').checked) total += 200;
-            if (document.getElementById('extra_window').checked) total += 150;
-            if (document.getElementById('extra_fridge').checked) total += 100;
-            document.getElementById('totalPrice').innerHTML = total + ' ₺';
-            return total;
         }
 
         function getStatusConfig(status) {
@@ -297,111 +580,262 @@
             return configs[status] || { label: status, color: '#999' };
         }
 
+        // ========== РАБОТА С ЗАКАЗАМИ ==========
+        function loadOrdersFromLocal() {
+            const saved = localStorage.getItem('suptemiz_orders');
+            if (saved) {
+                allOrders = JSON.parse(saved);
+                document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы ✅';
+                document.getElementById('syncStatus').className = 'sync-status online';
+            } else {
+                allOrders = [];
+                document.getElementById('syncStatus').innerHTML = '📭 Нет заказов';
+                document.getElementById('syncStatus').className = 'sync-status online';
+            }
+            saveOrdersToLocal();
+            loadHistory();
+            loadAdminOrders();
+        }
+
+        function saveOrdersToLocal() {
+            localStorage.setItem('suptemiz_orders', JSON.stringify(allOrders));
+        }
+
+        function updateOrderStatus(orderId, newStatus, updatedBy) {
+            const orderIndex = allOrders.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1) {
+                allOrders[orderIndex].status = newStatus;
+                saveOrdersToLocal();
+                showToast(`✅ Статус заказа #${orderId} изменён на "${newStatus}"`);
+                loadHistory();
+                loadAdminOrders();
+            }
+        }
+
+        function createOrder() {
+            const name = localStorage.getItem('suptemiz_userName');
+            const phone = localStorage.getItem('suptemiz_userPhone');
+            const address = document.getElementById('address').value.trim();
+            
+            if (!address) {
+                showToast('Укажите адрес');
+                return;
+            }
+            
+            if (!name || !phone) {
+                showRegisterModal(() => createOrder());
+                return;
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const selectedDate = document.getElementById('date').value;
+            
+            if (selectedDate < today) {
+                showToast('Нельзя выбрать прошедшую дату');
+                return;
+            }
+            
+            const order = {
+                id: Date.now(),
+                createdAt: new Date().toISOString(),
+                orderDate: selectedDate || today,
+                orderTime: document.getElementById('time').value,
+                address: address,
+                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                service: getSelectedServiceText(),
+                extras: getExtras(),
+                total: calculateTotal(),
+                status: 'Ожидает подтверждения',
+                userName: name,
+                userPhone: phone
+            };
+            
+            allOrders.unshift(order);
+            saveOrdersToLocal();
+            showToast('✅ Заказ оформлен!');
+            
+            // Очистка формы
+            document.getElementById('address').value = '';
+            document.getElementById('extra_ac').checked = false;
+            document.getElementById('extra_window').checked = false;
+            document.getElementById('extra_fridge').checked = false;
+            
+            loadHistory();
+            if (currentRole !== 'client') loadAdminOrders();
+        }
+
+        // ========== ОТОБРАЖЕНИЕ ИСТОРИИ ==========
         function loadHistory() {
-            const userPhone = localStorage.getItem('userPhone');
-            let displayOrders = currentRole === 'client' ? allOrders.filter(o => o.userPhone === userPhone) : allOrders;
             const container = document.getElementById('historyList');
-            if (displayOrders.length === 0) { container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>'; return; }
+            const userPhone = localStorage.getItem('suptemiz_userPhone');
+            
+            let displayOrders = allOrders;
+            if (currentRole === 'client' && userPhone) {
+                displayOrders = allOrders.filter(o => o.userPhone === userPhone);
+            }
+            
+            if (displayOrders.length === 0) {
+                container.innerHTML = '<div class="empty-state">📭 Нет заказов</div>';
+                return;
+            }
+            
             container.innerHTML = displayOrders.map(order => {
                 const config = getStatusConfig(order.status);
-                return `<div class="history-item">
-                    <strong>${new Date(order.createdAt).toLocaleDateString()}</strong>
-                    <span style="float:right;">${order.total} ₺</span><br>
-                    ${order.service}<br><small>${order.address}</small><br>
-                    <span class="status-badge" style="background: ${config.color};">${config.label}</span>
-                    ${currentRole === 'client' && order.status === 'Ожидает подтверждения' ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
-                    <div class="order-id">🆔 #${order.id}</div>
-                </div>`;
+                const canCancel = (currentRole === 'client' && order.status === 'Ожидает подтверждения');
+                
+                return `
+                    <div class="history-item">
+                        <div><strong>${order.orderDate}</strong> <span style="float:right;">${order.total} ₺</span></div>
+                        <div>${order.service}</div>
+                        <div><small>📍 ${order.address}</small></div>
+                        <div><span class="status-badge" style="background: ${config.color};">${config.label}</span></div>
+                        ${canCancel ? `<div class="status-actions"><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', '${order.userName}')">❌ Отменить</button></div>` : ''}
+                        <div class="order-id">🆔 #${order.id}</div>
+                    </div>
+                `;
             }).join('');
         }
 
         function loadAdminOrders() {
             const container = document.getElementById('adminOrdersList');
-            if (allOrders.length === 0) { container.innerHTML = '<p style="text-align:center;padding:20px;">Нет заказов</p>'; return; }
-            container.innerHTML = allOrders.map(order => `<div class="admin-order-item">
-                <strong>${order.userName}</strong> | ${order.userPhone}<br>
-                ${order.service} | ${order.total} ₺<br><small>${order.address}</small><br>
-                <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
-                <div class="status-actions">
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
-                    <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
+            if (allOrders.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:20px;">Нет заказов</p>';
+                return;
+            }
+            
+            container.innerHTML = allOrders.map(order => `
+                <div class="admin-order-item">
+                    <strong>${order.userName}</strong> | ${order.userPhone}<br>
+                    ${order.service} | ${order.total} ₺<br>
+                    <small>${order.address}</small><br>
+                    <span class="status-badge" style="background: ${getStatusConfig(order.status).color};">${getStatusConfig(order.status).label}</span>
+                    <div class="status-actions">
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Подтверждён', 'Админ')">✅ Подтвердить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Клинер выехал', 'Клинер')">🚗 Выехал</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка началась', 'Клинер')">🧹 Начать</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Уборка завершена', 'Клинер')">✅ Готово</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Завершён', 'Админ')">⭐ Завершить</button>
+                        <button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён', 'Админ')">❌ Отменить</button>
+                    </div>
+                    <div class="order-id">🆔 #${order.id}</div>
                 </div>
-                <div class="order-id">🆔 #${order.id}</div>
-            </div>`).join('');
+            `).join('');
         }
 
+        // ========== РОЛИ И ПРОФИЛЬ ==========
         function checkRole() {
-            const phone = localStorage.getItem('userPhone');
-            const isAdmin = phone === '0852159181';
-            const isCleaner = phone === '05331234567';
-            if (isAdmin) { currentRole = 'admin'; document.getElementById('roleBadge').innerHTML = '👑 Администратор'; document.getElementById('adminFab').style.display = 'flex'; }
-            else if (isCleaner) { currentRole = 'cleaner'; document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; document.getElementById('adminFab').style.display = 'flex'; }
-            else { currentRole = 'client'; document.getElementById('roleBadge').innerHTML = '👤 Клиент'; document.getElementById('adminFab').style.display = 'none'; }
+            const phone = localStorage.getItem('suptemiz_userPhone');
+            currentUserPhone = phone || '';
+            
+            if (ADMIN_PHONES.includes(phone)) {
+                currentRole = 'admin';
+                document.getElementById('roleBadge').innerHTML = '👑 Администратор';
+                document.getElementById('adminFab').style.display = 'flex';
+            } else if (CLEANER_PHONES.includes(phone)) {
+                currentRole = 'cleaner';
+                document.getElementById('roleBadge').innerHTML = '🧹 Клинер';
+                document.getElementById('adminFab').style.display = 'flex';
+            } else {
+                currentRole = 'client';
+                document.getElementById('roleBadge').innerHTML = '👤 Клиент';
+                document.getElementById('adminFab').style.display = 'none';
+            }
             loadHistory();
         }
 
         function loadProfile() {
-            document.getElementById('userName').value = localStorage.getItem('userName') || '';
-            document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
+            document.getElementById('userName').value = localStorage.getItem('suptemiz_userName') || '';
+            document.getElementById('userPhone').value = localStorage.getItem('suptemiz_userPhone') || '';
             checkRole();
         }
 
         function saveProfile() {
-            localStorage.setItem('userName', document.getElementById('userName').value);
-            localStorage.setItem('userPhone', document.getElementById('userPhone').value);
-            checkRole();
-            showToast('✅ Профиль сохранён!');
-            syncFromCloud();
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            
+            if (name && phone) {
+                localStorage.setItem('suptemiz_userName', name);
+                localStorage.setItem('suptemiz_userPhone', phone);
+                checkRole();
+                showToast('✅ Профиль сохранён!');
+            } else {
+                showToast('Заполните имя и телефон');
+            }
         }
 
-        function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
         function showRegisterModal(callback) {
             const modal = document.getElementById('registerModal');
-            document.getElementById('modalName').value = localStorage.getItem('userName') || '';
-            document.getElementById('modalPhone').value = localStorage.getItem('userPhone') || '';
+            document.getElementById('modalName').value = localStorage.getItem('suptemiz_userName') || '';
+            document.getElementById('modalPhone').value = localStorage.getItem('suptemiz_userPhone') || '';
             modal.classList.add('active');
-            document.getElementById('modalSaveBtn').onclick = () => {
+            
+            const saveHandler = () => {
                 const name = document.getElementById('modalName').value.trim();
                 const phone = document.getElementById('modalPhone').value.trim();
                 if (name && phone) {
-                    localStorage.setItem('userName', name);
-                    localStorage.setItem('userPhone', phone);
+                    localStorage.setItem('suptemiz_userName', name);
+                    localStorage.setItem('suptemiz_userPhone', phone);
                     modal.classList.remove('active');
                     if (callback) callback();
-                } else showToast('Заполните имя и телефон');
+                } else {
+                    showToast('Заполните имя и телефон');
+                }
             };
-            document.getElementById('modalCloseBtn').onclick = () => modal.classList.remove('active');
+            
+            const closeHandler = () => {
+                modal.classList.remove('active');
+                document.getElementById('modalSaveBtn').removeEventListener('click', saveHandler);
+                document.getElementById('modalCloseBtn').removeEventListener('click', closeHandler);
+            };
+            
+            document.getElementById('modalSaveBtn').onclick = saveHandler;
+            document.getElementById('modalCloseBtn').onclick = closeHandler;
         }
 
-        // Инициализация
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.onclick = () => {
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
-                if (tab.dataset.tab === 'history') loadHistory();
-                if (tab.dataset.tab === 'profile') loadProfile();
-            };
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function initTabs() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.dataset.tab;
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tabId + '-tab').classList.add('active');
+                    if (tabId === 'history') loadHistory();
+                    if (tabId === 'profile') loadProfile();
+                });
+            });
+        }
+
+        // Настройка минимальной даты
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').min = today;
+        document.getElementById('date').value = today;
+
+        // Слушатели
+        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => {
+            el.addEventListener('change', calculateTotal);
+        });
+        
+        document.getElementById('orderBtn').addEventListener('click', createOrder);
+        document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+        document.getElementById('adminFab')?.addEventListener('click', () => {
+            loadAdminOrders();
+            document.getElementById('adminModal').style.display = 'flex';
+        });
+        document.getElementById('closeAdminBtn')?.addEventListener('click', () => {
+            document.getElementById('adminModal').style.display = 'none';
         });
 
-        document.getElementById('adminFab')?.addEventListener('click', () => { loadAdminOrders(); document.getElementById('adminModal').style.display = 'flex'; });
-        document.getElementById('closeAdminBtn')?.addEventListener('click', () => document.getElementById('adminModal').style.display = 'none');
-        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el => el.addEventListener('change', calculateTotal));
-        document.getElementById('orderBtn').addEventListener('click', saveOrder);
-        document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
-        
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').value = today;
-        
+        // Запуск
+        initTabs();
         calculateTotal();
         loadProfile();
-        syncFromCloud();
-        setInterval(syncFromCloud, 30000);
+        loadOrdersFromLocal();
+        
+        // Делаем функции глобальными для вызова из HTML
+        window.updateOrderStatus = updateOrderStatus;
+        window.loadOrdersFromLocal = loadOrdersFromLocal;
     </script>
 </body>
 </html>
