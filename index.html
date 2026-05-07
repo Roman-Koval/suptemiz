@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#22c55e">
-    <title>SupTemiz — Клининг Северного Кипра</title>
+    <title>SupTemiz — Клининг Кипр</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -13,99 +13,74 @@
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="app-container">
-        <header class="glass-header">
-            <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
-            <div class="header-controls">
-                <select id="langSelect" class="lang-select">
+    <div class="container">
+        <header>
+            <div class="logo">✨ SupTemiz</div>
+            <div class="header-right">
+                <select id="langSelect">
                     <option value="ru">🇷🇺 RU</option>
                     <option value="tr">🇹🇷 TR</option>
                     <option value="en">🇬🇧 EN</option>
                 </select>
-                <button id="themeToggle" class="icon-btn">🌙</button>
+                <button id="themeToggle">🌙</button>
             </div>
         </header>
 
-        <div class="promo-banner glass">🎉 Первая уборка — 25% скидка новым клиентам!</div>
+        <div class="promo">🎉 Первая уборка — 25% скидка новым клиентам!</div>
 
-        <nav class="bottom-nav glass">
-            <button class="nav-btn active" data-tab="order">📋<span>Заказ</span></button>
-            <button class="nav-btn" data-tab="gallery">🖼️<span>Галерея</span></button>
-            <button class="nav-btn" data-tab="history">📜<span>История</span></button>
-            <button class="nav-btn" data-tab="profile">👤<span>Профиль</span></button>
-        </nav>
+        <main>
+            <!-- ORDER SCREEN -->
+            <div id="orderScreen">
+                <div class="card">
+                    <h3>📍 Район</h3>
+                    <select id="district" class="input"></select>
+                    <input type="text" id="address" class="input" placeholder="Полный адрес">
+                </div>
 
-        <!-- ORDER -->
-        <div id="order-tab" class="tab-content active">
-            <div class="card glass">
-                <h3>📍 Район</h3>
-                <select id="district" class="input"></select>
-                <input type="text" id="address" class="input" placeholder="Полный адрес">
-            </div>
-
-            <div class="card glass">
-                <h3>🏠 Комнаты и площадь</h3>
-                <div class="flex-row">
+                <div class="card">
+                    <h3>🏠 Комнаты и площадь</h3>
                     <select id="rooms" class="input"></select>
-                    <input type="number" id="area" class="input" placeholder="м²" value="80">
+                    <input type="number" id="area" class="input" value="80" placeholder="м²">
+                </div>
+
+                <div class="card">
+                    <h3>✨ Дополнительно</h3>
+                    <div id="extrasContainer"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📅 Дата и время</h3>
+                    <input type="date" id="date" class="input">
+                    <select id="time" class="input"></select>
+                </div>
+
+                <div class="total-bar">
+                    <div>
+                        <span>Итого:</span>
+                        <span id="totalPrice" class="total">650 ₺</span>
+                    </div>
+                    <button id="submitOrder" class="btn-order">Оформить + Оплатить</button>
+                </div>
+
+                <div class="card">
+                    <input type="text" id="userName" class="input" placeholder="Имя">
+                    <input type="tel" id="userPhone" class="input" placeholder="+90 ___ ___ __ __">
+                    <input type="email" id="userEmail" class="input" placeholder="Email">
+                    <button id="saveProfile" class="btn-save">💾 Сохранить профиль</button>
                 </div>
             </div>
+        </main>
 
-            <div class="card glass">
-                <h3>🧹 Тип уборки</h3>
-                <div id="serviceGrid" class="grid-options"></div>
-            </div>
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-screen="order">📋 Заказ</button>
+            <button class="nav-btn" data-screen="gallery">🖼️ Галерея</button>
+            <button class="nav-btn" data-screen="history">📜 История</button>
+            <button class="nav-btn" data-screen="profile">👤 Профиль</button>
+        </nav>
 
-            <div class="card glass">
-                <h3>✨ Дополнительно</h3>
-                <div id="extrasContainer"></div>
-            </div>
-
-            <div class="card glass">
-                <h3>📅 Дата и время</h3>
-                <input type="date" id="date" class="input">
-                <select id="time" class="input"></select>
-            </div>
-
-            <div class="total-bar glass">
-                <div>Итого: <span id="totalPrice" class="total">650 ₺</span></div>
-                <button id="orderBtn" class="btn-primary">Оформить + Оплатить</button>
-            </div>
-        </div>
-
-        <!-- GALLERY -->
-        <div id="gallery-tab" class="tab-content">
-            <div id="galleryGrid" class="gallery-grid"></div>
-        </div>
-
-        <!-- HISTORY -->
-        <div id="history-tab" class="tab-content">
-            <div id="historyList"></div>
-        </div>
-
-        <!-- PROFILE -->
-        <div id="profile-tab" class="tab-content">
-            <div class="card glass">
-                <input type="text" id="userName" class="input" placeholder="Имя">
-                <input type="tel" id="userPhone" class="input" placeholder="+90 ___ ___ __ __">
-                <input type="email" id="userEmail" class="input" placeholder="Email">
-                <button id="saveProfileBtn" class="btn-primary">💾 Сохранить профиль</button>
-            </div>
-            <button id="adminBtn" class="btn-secondary">🔧 Админ-панель</button>
-        </div>
+        <button id="adminFab" class="fab">🔧</button>
+        <div id="toast" class="toast"></div>
     </div>
-
-    <!-- ADMIN MODAL -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content glass">
-            <h2>🔧 Админ-панель</h2>
-            <div id="adminOrdersList"></div>
-            <button id="closeAdmin" class="btn-primary">Закрыть</button>
-        </div>
-    </div>
-
-    <div id="toast" class="toast"></div>
-    <div id="adminFab" class="admin-fab">🔧</div>
 
     <script src="app.js" defer></script>
 </body>
