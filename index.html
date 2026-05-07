@@ -58,7 +58,7 @@
         
         <div class="sync-status" id="syncStatus">
             🔄 Загрузка... 
-            <button class="refresh-btn" onclick="syncAllOrders()">Обновить</button>
+            <button class="refresh-btn" onclick="syncOrders()">Обновить</button>
         </div>
 
         <nav class="main-nav">
@@ -147,163 +147,74 @@
     <div id="toast" class="toast-message"></div>
 
     <script>
-        // ========== TELEGRAM НАСТРОЙКИ ==========
-        const BOT_TOKEN = '8776328263:AANez7565yh4XyI8stLj6efMOP9QGMAvGH8';
-        const ADMIN_CHAT_ID = '897174464';
+        // ========== JSONBin.io НАСТРОЙКИ ==========
+        // Бесплатное облачное хранилище для синхронизации заказов
+        const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/682c4b73ad19ca34f8f5b135';
+        const JSONBIN_SECRET = '$2a$10$9xYkWgQZ7YlQZQp9XpQ7POcRqXqXqXqXqXqXqXqXqXqXqXqXqXq';
         
         let allOrders = [];
         let currentRole = 'client';
 
-        // Загрузка заказов из Telegram
-        async function syncAllOrders() {
-            document.getElementById('syncStatus').innerHTML = '🔄 Синхронизация... <button class="refresh-btn" onclick="syncAllOrders()">Обновить</button>';
+        // Загрузка заказов из облака
+        async function syncOrders() {
+            document.getElementById('syncStatus').innerHTML = '🔄 Синхронизация...';
             
             try {
-                // Получаем историю сообщений
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-100`);
+                const response = await fetch(JSONBIN_URL, {
+                    headers: { 'X-Master-Key': JSONBIN_SECRET }
+                });
                 const data = await response.json();
                 
-                if (data.ok && data.result) {
-                    const ordersFromMessages = [];
-                    
-                    for (const update of data.result) {
-                        if (update.message && update.message.text) {
-                            const text = update.message.text;
-                            
-                            // Парсим новый заказ
-                            if (text.includes('🆔 ID:')) {
-                                const order = parseOrder(text, update.message.date);
-                                if (order && !ordersFromMessages.find(o => o.id === order.id)) {
-                                    ordersFromMessages.push(order);
-                                }
-                            }
-                            
-                            // Парсим обновление статуса
-                            if (text.includes('ОБНОВЛЕНИЕ СТАТУСА')) {
-                                const statusData = parseStatusUpdate(text);
-                                if (statusData) {
-                                    const existingOrder = ordersFromMessages.find(o => o.id === statusData.orderId);
-                                    if (existingOrder) {
-                                        existingOrder.status = statusData.newStatus;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (ordersFromMessages.length > 0) {
-                        // Сохраняем в localStorage
-                        let savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                        for (const newOrder of ordersFromMessages) {
-                            const existingIndex = savedOrders.findIndex(o => o.id === newOrder.id);
-                            if (existingIndex === -1) {
-                                savedOrders.push(newOrder);
-                            } else {
-                                savedOrders[existingIndex] = newOrder;
-                            }
-                        }
-                        savedOrders.sort((a,b) => b.id - a.id);
-                        localStorage.setItem('orders', JSON.stringify(savedOrders));
-                        allOrders = savedOrders;
-                        document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
-                    } else {
-                        allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                        document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
-                    }
+                if (data && data.record && data.record.orders) {
+                    allOrders = data.record.orders;
+                    localStorage.setItem('orders', JSON.stringify(allOrders));
+                    document.getElementById('syncStatus').innerHTML = '✅ Синхронизировано с сервером 🔄';
                 } else {
                     allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                    document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
+                    document.getElementById('syncStatus').innerHTML = '📋 Локальные заказы 🔄';
                 }
             } catch(e) {
                 console.log('Ошибка:', e);
                 allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-                document.getElementById('syncStatus').innerHTML = '⚠️ Ошибка соединения <button class="refresh-btn" onclick="syncAllOrders()">🔄</button>';
+                document.getElementById('syncStatus').innerHTML = '⚠️ Офлайн режим 🔄';
             }
             
             loadHistory();
             loadAdminOrders();
         }
 
-        function parseOrder(text, timestamp) {
-            const idMatch = text.match(/🆔 ID: (\d+)/);
-            const nameMatch = text.match(/👤 Клиент: (.+)/);
-            const phoneMatch = text.match(/📞 Телефон: (.+)/);
-            const districtMatch = text.match(/📍 (.+?)\n/);
-            const addressMatch = text.match(/🏠 (.+?)\n/);
-            const serviceMatch = text.match(/🧹 (.+?)\n/);
-            const priceMatch = text.match(/💰 (\d+) ₺/);
-            
-            if (idMatch && nameMatch && phoneMatch) {
-                return {
-                    id: parseInt(idMatch[1]),
-                    date: new Date(timestamp * 1000).toISOString(),
-                    userName: nameMatch[1],
-                    userPhone: phoneMatch[1],
-                    district: districtMatch ? districtMatch[1].replace('📍 ', '') : '',
-                    address: addressMatch ? addressMatch[1].replace('🏠 ', '') : '',
-                    service: serviceMatch ? serviceMatch[1].replace('🧹 ', '') : '',
-                    total: priceMatch ? parseInt(priceMatch[1]) : 0,
-                    status: 'Ожидает подтверждения',
-                    orderDate: new Date().toISOString().split('T')[0],
-                    orderTime: '09:00 - 12:00'
-                };
-            }
-            return null;
-        }
-
-        function parseStatusUpdate(text) {
-            const idMatch = text.match(/Заказ #(\d+)/);
-            const statusMatch = text.match(/Новый статус: (.+)/);
-            if (idMatch && statusMatch) {
-                return { orderId: parseInt(idMatch[1]), newStatus: statusMatch[1] };
-            }
-            return null;
-        }
-
-        // Отправка в Telegram
-        async function sendToTelegram(text) {
+        // Сохранение заказов в облако
+        async function saveToCloud() {
             try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: text })
+                await fetch(JSONBIN_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_SECRET
+                    },
+                    body: JSON.stringify({ orders: allOrders })
                 });
-                return await response.json();
+                console.log('Сохранено в облако');
             } catch(e) {
-                console.log('Ошибка:', e);
-                return null;
+                console.log('Ошибка сохранения:', e);
             }
         }
 
         // Обновление статуса
         async function updateOrderStatus(orderId, newStatus, updatedBy) {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const order = orders.find(o => o.id === orderId);
+            const order = allOrders.find(o => o.id === orderId);
             
             if (order) {
                 const oldStatus = order.status;
                 order.status = newStatus;
-                localStorage.setItem('orders', JSON.stringify(orders));
-                allOrders = orders;
                 
-                const message = `📢 ОБНОВЛЕНИЕ СТАТУСА ЗАКАЗА!
-━━━━━━━━━━━━━━━━━━━━━
-🆔 Заказ #${order.id}
-👤 Клиент: ${order.userName}
-📞 Телефон: ${order.userPhone}
-🧹 Услуга: ${order.service}
-💰 Сумма: ${order.total} ₺
-━━━━━━━━━━━━━━━━━━━━━
-📌 Старый статус: ${oldStatus}
-✨ Новый статус: ${newStatus}
-👨‍💼 Обновил: ${updatedBy}
-━━━━━━━━━━━━━━━━━━━━━
-⏰ ${new Date().toLocaleString('ru-RU')}`;
+                localStorage.setItem('orders', JSON.stringify(allOrders));
+                await saveToCloud();
                 
-                await sendToTelegram(message);
                 showToast(`✅ Статус изменён на "${newStatus}"`);
                 loadHistory();
                 loadAdminOrders();
+                syncOrders();
             }
         }
 
@@ -334,36 +245,13 @@
                 userPhone: phone
             };
             
-            // Сохраняем локально
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            orders.unshift(order);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            allOrders = orders;
+            allOrders.unshift(order);
+            localStorage.setItem('orders', JSON.stringify(allOrders));
+            await saveToCloud();
             
-            // Отправляем в Telegram
-            const message = `🚨 НОВЫЙ ЗАКАЗ SupTemiz!
-━━━━━━━━━━━━━━━━━━━━━
-🆔 ID: ${order.id}
-👤 Клиент: ${order.userName}
-📞 Телефон: ${order.userPhone}
-📍 ${order.district}
-🏠 ${order.address}
-🧹 ${order.service}
-✨ ${order.extras}
-📅 ${order.orderDate} ${order.orderTime}
-💰 ${order.total} ₺
-━━━━━━━━━━━━━━━━━━━━━`;
-            
-            const result = await sendToTelegram(message);
-            if (result && result.ok) {
-                showToast('✅ Заказ создан и отправлен!');
-            } else {
-                showToast('✅ Заказ сохранён локально');
-            }
-            
+            showToast('✅ Заказ создан!');
             loadHistory();
             
-            // Очистка формы
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
@@ -464,17 +352,14 @@
                 currentRole = 'admin'; 
                 document.getElementById('roleBadge').innerHTML = '👑 Админ'; 
                 document.getElementById('adminFab').style.display = 'flex';
-                document.getElementById('syncStatus').style.display = 'block';
             } else if (isCleaner) { 
                 currentRole = 'cleaner'; 
                 document.getElementById('roleBadge').innerHTML = '🧹 Клинер'; 
                 document.getElementById('adminFab').style.display = 'flex';
-                document.getElementById('syncStatus').style.display = 'block';
             } else { 
                 currentRole = 'client'; 
                 document.getElementById('roleBadge').innerHTML = '👤 Клиент'; 
                 document.getElementById('adminFab').style.display = 'none';
-                document.getElementById('syncStatus').style.display = 'block';
             }
             loadHistory();
         }
@@ -492,7 +377,7 @@
             localStorage.setItem('userEmail', document.getElementById('userEmail').value);
             checkRole();
             showToast('✅ Профиль сохранён!');
-            syncAllOrders();
+            syncOrders();
         }
 
         function showToast(msg) {
@@ -543,8 +428,8 @@
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
         
         // Загружаем заказы
-        syncAllOrders();
-        setInterval(syncAllOrders, 30000);
+        syncOrders();
+        setInterval(syncOrders, 30000);
     </script>
 </body>
 </html>
