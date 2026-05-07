@@ -1,16 +1,16 @@
 const CACHE_NAME = 'suptemiz-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-72.png',
-  '/icons/icon-96.png',
-  '/icons/icon-128.png',
-  '/icons/icon-144.png',
-  '/icons/icon-152.png',
-  '/icons/icon-192.png',
-  '/icons/icon-384.png',
-  '/icons/icon-512.png'
+  '/suptemiz/',
+  '/suptemiz/index.html',
+  '/suptemiz/manifest.json',
+  '/suptemiz/icons/icon-72.png',
+  '/suptemiz/icons/icon-96.png',
+  '/suptemiz/icons/icon-128.png',
+  '/suptemiz/icons/icon-144.png',
+  '/suptemiz/icons/icon-152.png',
+  '/suptemiz/icons/icon-192.png',
+  '/suptemiz/icons/icon-384.png',
+  '/suptemiz/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
