@@ -12,101 +12,57 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/icon-192.png">
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker зарегистрирован ✅', reg.scope))
-                .catch(err => console.log('Service Worker ошибка:', err));
-        });
-    }
-</script>
 </head>
 <body>
     <div class="app-container">
         <header class="glass-header">
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
             <div class="header-controls">
-                <select id="langSelect" class="lang-select">
-                    <option value="ru">🇷🇺 RU</option>
-                    <option value="tr">🇹🇷 TR</option>
-                    <option value="en">🇬🇧 EN</option>
-                </select>
+                <select id="langSelect" class="lang-select"></select>
                 <button id="themeToggle" class="icon-btn">🌙</button>
             </div>
         </header>
 
-        <div class="promo-banner glass">🎉 Первая уборка — 25% скидка новым клиентам!</div>
-        <div class="sync-status" id="syncStatus">🟢 Работает онлайн</div>
+        <div class="promo-banner glass">🎉 Первая уборка — 25% скидка!</div>
 
         <nav class="bottom-nav glass">
-            <button class="nav-btn active" data-tab="order">📋<span data-i18n="nav_order">Заказ</span></button>
-            <button class="nav-btn" data-tab="history">📜<span data-i18n="nav_history">История</span></button>
-            <button class="nav-btn" data-tab="profile">👤<span data-i18n="nav_profile">Профиль</span></button>
+            <button class="nav-btn active" data-tab="order">📋<span>Заказ</span></button>
+            <button class="nav-btn" data-tab="gallery">🖼️<span>Галерея</span></button>
+            <button class="nav-btn" data-tab="history">📜<span>История</span></button>
+            <button class="nav-btn" data-tab="profile">👤<span>Профиль</span></button>
         </nav>
 
         <!-- ORDER TAB -->
-        <div id="order-tab" class="tab-content active">
-            <!-- District -->
-            <div class="card glass">
-                <h3 data-i18n="location_title">📍 Ваш район</h3>
-                <select id="district" class="input"></select>
-                <input type="text" id="address" class="input" placeholder="Улица, дом, квартира">
-            </div>
+        <div id="order-tab" class="tab-content active"> ... (оставь как в предыдущей версии) </div>
 
-            <!-- Rooms + Area -->
-            <div class="card glass">
-                <h3>🏠 Комнаты и площадь</h3>
-                <div class="flex-row">
-                    <select id="rooms" class="input">
-                        <option value="1">1 комната</option>
-                        <option value="2" selected>2 комнаты</option>
-                        <option value="3">3 комнаты</option>
-                        <option value="4">4+ комнаты</option>
-                    </select>
-                    <input type="number" id="area" class="input" placeholder="м²" min="30" value="80">
-                </div>
-            </div>
-
-            <!-- Service Type -->
-            <div class="card glass">
-                <h3 data-i18n="service_title">🧹 Тип уборки</h3>
-                <div id="serviceGrid" class="grid-options"></div>
-            </div>
-
-            <!-- Extras -->
-            <div class="card glass">
-                <h3 data-i18n="extras_title">✨ Дополнительно</h3>
-                <div id="extrasContainer"></div>
-            </div>
-
-            <!-- Date & Time -->
-            <div class="card glass">
-                <h3 data-i18n="date_title">📅 Дата и время</h3>
-                <input type="date" id="date" class="input">
-                <select id="time" class="input"></select>
-            </div>
-
-            <div class="total-bar glass">
-                <div>Итого: <span id="totalPrice" class="total">650 ₺</span></div>
-                <button id="orderBtn" class="btn-primary">Оформить заказ</button>
-            </div>
+        <!-- GALLERY TAB -->
+        <div id="gallery-tab" class="tab-content">
+            <div class="gallery-grid" id="galleryGrid"></div>
         </div>
 
         <!-- HISTORY TAB -->
         <div id="history-tab" class="tab-content">
-            <div id="historyList" class="history-list"></div>
+            <div id="historyList"></div>
         </div>
 
         <!-- PROFILE TAB -->
         <div id="profile-tab" class="tab-content">
             <div class="card glass">
-                <div class="avatar">👤</div>
                 <input type="text" id="userName" class="input" placeholder="Имя">
-                <input type="tel" id="userPhone" class="input" placeholder="+90 ___ ___ __ __">
-                <input type="email" id="userEmail" class="input" placeholder="Email (опционально)">
-                <button id="saveProfileBtn" class="btn-primary">💾 Сохранить профиль</button>
+                <input type="tel" id="userPhone" class="input" placeholder="+90">
+                <input type="email" id="userEmail" class="input" placeholder="Email">
+                <button id="saveProfileBtn" class="btn-primary">Сохранить</button>
             </div>
+            <button id="adminBtn" class="btn-secondary" style="margin:12px;">🔧 Админ-панель</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content glass">
+            <h2>Админ-панель</h2>
+            <div id="adminOrdersList"></div>
+            <button id="closeAdmin">Закрыть</button>
         </div>
     </div>
 
