@@ -5,416 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#2E7D32">
     <title>SupTemiz — Клининг Северного Кипра</title>
-    <!-- Firebase SDK -->
+    
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background 0.2s, color 0.2s, border-color 0.2s;
-        }
-
-        /* Светлая тема (по умолчанию) */
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f5f7fb;
-            color: #1a1a1a;
-            padding-bottom: 80px;
-        }
-
-        /* Тёмная тема */
-        body.dark {
-            background: #121212;
-            color: #e0e0e0;
-        }
-
-        body.dark .card,
-        body.dark header,
-        body.dark .main-nav,
-        body.dark .history-item,
-        body.dark .modal-content,
-        body.dark .admin-order-item,
-        body.dark .sync-status {
-            background: #1e1e1e;
-            color: #e0e0e0;
-            border-color: #333;
-        }
-
-        body.dark .form-select,
-        body.dark .form-input,
-        body.dark .service-option,
-        body.dark .extra-option {
-            background: #2a2a2a;
-            color: #e0e0e0;
-            border-color: #444;
-        }
-
-        body.dark .btn-secondary {
-            background: #444;
-            color: white;
-        }
-
-        body.dark .price,
-        body.dark .total-price {
-            color: #81c784;
-        }
-
-        body.dark .status-badge {
-            filter: brightness(0.9);
-        }
-
-        .app-container {
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-        }
-
-        header {
-            background: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .accent {
-            color: #2E7D32;
-        }
-
-        .role-badge {
-            background: #e8f5e9;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        body.dark .role-badge {
-            background: #2E7D32;
-            color: white;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-
-        .promo-banner {
-            background: linear-gradient(135deg, #2E7D32, #1B5E20);
-            color: white;
-            padding: 10px 16px;
-            margin: 16px 12px 0;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .main-nav {
-            display: flex;
-            background: white;
-            margin: 12px;
-            border-radius: 16px;
-            padding: 4px;
-            gap: 4px;
-        }
-
-        .nav-tab {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .nav-tab.active {
-            background: #2E7D32;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 0 12px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background: white;
-            margin: 12px 0;
-            padding: 18px;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-select,
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            margin-top: 8px;
-            font-size: 16px;
-        }
-
-        .service-option {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            margin: 8px 0;
-            background: #f9f9f9;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .service-option input {
-            margin-right: 12px;
-        }
-
-        .price {
-            margin-left: auto;
-            color: #2E7D32;
-            font-weight: 700;
-        }
-
-        .extra-option {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            cursor: pointer;
-        }
-
-        .extra-option input {
-            margin-right: 12px;
-        }
-
-        .extra-option .price {
-            margin-left: auto;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: #2E7D32;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 12px 0;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            background: #e0e0e0;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .history-item {
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin-top: 8px;
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: #999;
-        }
-
-        .avatar {
-            font-size: 64px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        /* Модальное окно — улучшенное */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-            padding: 20px;
-        }
-
-        .modal-close-icon {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-weight: bold;
-            color: #999;
-        }
-        .modal-close-icon:hover {
-            color: #333;
-        }
-        body.dark .modal-close-icon {
-            color: #aaa;
-        }
-
-        .admin-order-item {
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
-            margin-bottom: 8px;
-        }
-        body.dark .admin-order-item {
-            border-bottom-color: #333;
-        }
-
-        /* Компактные кнопки статуса — в одну строку */
-        .compact-status-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 10px;
-        }
-        .compact-status-btn {
-            background: #f0f0f0;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s;
-            color: #333;
-        }
-        .compact-status-btn:active {
-            transform: scale(0.96);
-        }
-        .compact-status-btn[data-action="confirm"] { background: #2196F3; color: white; }
-        .compact-status-btn[data-action="arrive"] { background: #FF9800; color: white; }
-        .compact-status-btn[data-action="start"] { background: #FF5722; color: white; }
-        .compact-status-btn[data-action="complete"] { background: #4CAF50; color: white; }
-        .compact-status-btn[data-action="finish"] { background: #2E7D32; color: white; }
-        .compact-status-btn[data-action="cancel"] { background: #f44336; color: white; }
-
-        body.dark .compact-status-btn:not([data-action]) {
-            background: #444;
-            color: #eee;
-        }
-
-        .toast-message {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1a1a1a;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 40px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 1000;
-            font-size: 14px;
-        }
-        .toast-message.show {
-            opacity: 1;
-        }
-
-        .admin-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #2E7D32;
-            border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 200;
-            font-size: 24px;
-            color: white;
-        }
-
-        .sync-status {
-            font-size: 12px;
-            text-align: center;
-            padding: 6px;
-            margin: 8px 12px;
-            border-radius: 20px;
-            background: #e8f5e9;
-            color: #2E7D32;
-        }
-
-        .order-id {
-            font-size: 11px;
-            color: #999;
-            margin-top: 6px;
-        }
-        h3 { font-size: 16px; margin-bottom: 8px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="app-container">
         <header>
             <div class="logo">✨ Sup<span class="accent">Temiz</span></div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="header-right">
                 <span class="role-badge" id="roleBadge">👤 Клиент</span>
                 <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">🌙</button>
             </div>
@@ -431,335 +34,106 @@
 
         <!-- Вкладка Заказ -->
         <div id="order-tab" class="tab-content active">
+            <!-- Карточки будут стилизованы через CSS -->
             <div class="card">
                 <h3>📍 Ваш район</h3>
                 <select id="district" class="form-select">
                     <option value="lefkosa">Лефкоша (Никосия)</option>
                     <option value="girne" selected>Гирне (Кирения)</option>
                     <option value="gazimagusa">Газимагуса (Фамагуста)</option>
-                    <option value="iskele">Искеле (Трикомо)</option>
-                    <option value="guzelyurt">Гюзельюрт (Морфу)</option>
+                    <option value="iskele">Искеле</option>
+                    <option value="guzelyurt">Гюзельюрт</option>
                 </select>
                 <input type="text" id="address" placeholder="Улица, дом, квартира" class="form-input">
             </div>
+
             <div class="card">
                 <h3>🧹 Тип уборки</h3>
-                <label class="service-option"><input type="radio" name="service" value="standard" checked> Стандартная <span class="price">500 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="general"> Генеральная <span class="price">950 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="after_repair"> После ремонта <span class="price">1800 ₺</span></label>
-                <label class="service-option"><input type="radio" name="service" value="office"> Офисная <span class="price">700 ₺</span></label>
+                <div class="service-grid">
+                    <label class="service-option">
+                        <input type="radio" name="service" value="standard" checked>
+                        <div class="service-info"><strong>Стандартная</strong><small>1-2 комнаты</small></div>
+                        <span class="price">500 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="general">
+                        <div class="service-info"><strong>Генеральная</strong></div>
+                        <span class="price">950 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="after_repair">
+                        <div class="service-info"><strong>После ремонта</strong></div>
+                        <span class="price">1800 ₺</span>
+                    </label>
+                    <label class="service-option">
+                        <input type="radio" name="service" value="office">
+                        <div class="service-info"><strong>Офисная</strong></div>
+                        <span class="price">700 ₺</span>
+                    </label>
+                </div>
             </div>
+
             <div class="card">
                 <h3>✨ Дополнительно</h3>
-                <label class="extra-option"><input type="checkbox" id="extra_ac"> Чистка кондиционера <span class="price">+200 ₺</span></label>
-                <label class="extra-option"><input type="checkbox" id="extra_window"> Мойка окон <span class="price">+150 ₺</span></label>
-                <label class="extra-option"><input type="checkbox" id="extra_fridge"> Чистка холодильника <span class="price">+100 ₺</span></label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_ac"> Чистка кондиционера <span class="price">+200 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_window"> Мойка окон <span class="price">+150 ₺</span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" id="extra_fridge"> Чистка холодильника <span class="price">+100 ₺</span>
+                </label>
             </div>
+
             <div class="card">
                 <h3>📅 Дата и время</h3>
-                <input type="date" id="date" class="form-input" min="">
+                <input type="date" id="date" class="form-input">
                 <select id="time" class="form-select">
-                    <option>09:00 - 12:00</option><option>12:00 - 15:00</option>
-                    <option>15:00 - 18:00</option><option>18:00 - 21:00</option>
+                    <option>09:00 - 12:00</option>
+                    <option>12:00 - 15:00</option>
+                    <option>15:00 - 18:00</option>
+                    <option>18:00 - 21:00</option>
                 </select>
             </div>
-            <div class="card"><h3>💰 Итого: <span id="totalPrice">500 ₺</span></h3></div>
+
+            <div class="card total-card">
+                <div class="total-row">
+                    <span>Итого:</span>
+                    <span id="totalPrice" class="total-price">500 ₺</span>
+                </div>
+            </div>
+
             <button class="btn-primary" id="orderBtn">📞 Оформить заказ</button>
         </div>
 
-        <!-- Вкладка История -->
-        <div id="history-tab" class="tab-content"><div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div></div>
+        <!-- История -->
+        <div id="history-tab" class="tab-content">
+            <div id="historyList" class="history-list"></div>
+        </div>
 
-        <!-- Вкладка Профиль -->
+        <!-- Профиль -->
         <div id="profile-tab" class="tab-content">
             <div class="card">
                 <div class="avatar">👤</div>
                 <input type="text" id="userName" placeholder="Ваше имя" class="form-input">
-                <input type="tel" id="userPhone" placeholder="Телефон (0533 123 45 67)" class="form-input">
+                <input type="tel" id="userPhone" placeholder="Телефон (+90 ...)" class="form-input">
+                <input type="email" id="userEmail" placeholder="Email (необязательно)" class="form-input">
                 <button class="btn-secondary" id="saveProfileBtn">💾 Сохранить профиль</button>
             </div>
-            <div class="card"><h4>📞 Контакты поддержки</h4><p>WhatsApp: +90 533 888 88 88</p></div>
+            <div class="card">
+                <h4>📞 Контакты поддержки</h4>
+                <p>WhatsApp: +90 533 888 88 88</p>
+            </div>
         </div>
     </div>
 
-    <!-- Модалка регистрации -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <h3>📝 Заполните профиль</h3>
-            <input type="text" id="modalName" placeholder="Ваше имя">
-            <input type="tel" id="modalPhone" placeholder="Телефон">
-            <button id="modalSaveBtn">Сохранить и продолжить</button>
-            <button id="modalCloseBtn" class="modal-close">Отмена</button>
-        </div>
-    </div>
-
-    <!-- Админ-панель (видна только админу/клинеру) -->
-    <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close-icon" id="closeAdminModalBtn">✕</button>
-            <h3>🔧 Управление заказами</h3>
-            <div id="adminOrdersList" style="margin-top: 16px;"></div>
-        </div>
-    </div>
-
+    <!-- Модальные окна и Toast -->
+    <div id="registerModal" class="modal">...</div> <!-- можешь оставить как было или упростить -->
+    <div id="adminModal" class="modal">...</div>
     <div id="toast" class="toast-message"></div>
+    <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
 
-    <script>
-        // ========== FIREBASE КОНФИГУРАЦИЯ ==========
-        const firebaseConfig = {
-            apiKey: "AIzaSyDcsvkCEcnkCivJxa6FRoUurgIUgYwW4qg",
-            authDomain: "suptemiz.firebaseapp.com",
-            databaseURL: "https://suptemiz-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "suptemiz",
-            storageBucket: "suptemiz.firebasestorage.app",
-            messagingSenderId: "399676923890",
-            appId: "1:399676923890:web:44657bb2870a7d76cd56b"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const ordersRef = database.ref('orders');
-
-        const ADMIN_PHONES = ['0852159181', '+905338888888'];
-        const CLEANER_PHONES = ['05331234567', '+905331234567'];
-        let allOrders = [];
-        let currentRole = 'client';
-
-        // --- Тёмная тема ---
-        function initTheme() {
-            const savedTheme = localStorage.getItem('suptemiz_theme');
-            const isDark = savedTheme === 'dark';
-            if (isDark) document.body.classList.add('dark');
-            document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-        }
-        function toggleTheme() {
-            const isDark = document.body.classList.toggle('dark');
-            localStorage.setItem('suptemiz_theme', isDark ? 'dark' : 'light');
-            document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-        }
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-        initTheme();
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        function calculateTotal() {
-            const service = document.querySelector('input[name="service"]:checked').value;
-            let total = { standard: 500, general: 950, after_repair: 1800, office: 700 }[service] || 500;
-            if (document.getElementById('extra_ac').checked) total += 200;
-            if (document.getElementById('extra_window').checked) total += 150;
-            if (document.getElementById('extra_fridge').checked) total += 100;
-            document.getElementById('totalPrice').innerHTML = total + ' ₺';
-            return total;
-        }
-
-        function getServiceText(v) {
-            const t = { standard:'Стандартная', general:'Генеральная', after_repair:'После ремонта', office:'Офисная' };
-            return t[v] || 'Стандартная';
-        }
-        function getSelectedServiceText() { return getServiceText(document.querySelector('input[name="service"]:checked').value); }
-        function getExtras() {
-            const e=[];
-            if(document.getElementById('extra_ac').checked) e.push('Кондиционер');
-            if(document.getElementById('extra_window').checked) e.push('Окна');
-            if(document.getElementById('extra_fridge').checked) e.push('Холодильник');
-            return e.join(', ') || 'Нет';
-        }
-        function getStatusConfig(status) {
-            const map = {
-                'Ожидает подтверждения': { label:'⏳ Ожидает', color:'#999' },
-                'Подтверждён': { label:'✅ Подтверждён', color:'#2196F3' },
-                'Клинер выехал': { label:'🚗 Выехал', color:'#FF9800' },
-                'Уборка началась': { label:'🧹 Уборка', color:'#FF5722' },
-                'Уборка завершена': { label:'✅ Готово', color:'#4CAF50' },
-                'Завершён': { label:'⭐ Завершён', color:'#2E7D32' },
-                'Отменён': { label:'❌ Отменён', color:'#f44336' }
-            };
-            return map[status] || { label:status, color:'#999' };
-        }
-
-        function listenToOrders() {
-            ordersRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if(data) {
-                    const arr = Object.entries(data).map(([k,o])=>({...o, firebaseKey:k}));
-                    arr.sort((a,b)=>b.id - a.id);
-                    allOrders = arr;
-                } else { allOrders = []; }
-                loadHistory();
-                loadAdminOrders();
-            });
-        }
-
-        async function createOrder() {
-            const name = localStorage.getItem('suptemiz_userName');
-            const phone = localStorage.getItem('suptemiz_userPhone');
-            const address = document.getElementById('address').value.trim();
-            if(!address) { showToast('Укажите адрес'); return; }
-            if(!name || !phone) { showRegisterModal(()=>createOrder()); return; }
-            const today = new Date().toISOString().split('T')[0];
-            const selectedDate = document.getElementById('date').value;
-            if(selectedDate < today) { showToast('Нельзя выбрать прошедшую дату'); return; }
-            const order = {
-                id: Date.now(),
-                createdAt: new Date().toISOString(),
-                orderDate: selectedDate || today,
-                orderTime: document.getElementById('time').value,
-                address, district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
-                service: getSelectedServiceText(), extras: getExtras(),
-                total: calculateTotal(), status: 'Ожидает подтверждения',
-                userName: name, userPhone: phone
-            };
-            await ordersRef.push(order);
-            showToast('✅ Заказ оформлен!');
-            document.getElementById('address').value = '';
-            document.getElementById('extra_ac').checked = false;
-            document.getElementById('extra_window').checked = false;
-            document.getElementById('extra_fridge').checked = false;
-        }
-
-        window.updateOrderStatus = async function(orderId, newStatus) {
-            const order = allOrders.find(o => o.id === orderId);
-            if(order && order.firebaseKey) {
-                await ordersRef.child(order.firebaseKey).update({ status: newStatus });
-                showToast(`✅ Статус #${orderId} → ${newStatus}`);
-            }
-        };
-
-        function loadHistory() {
-            const container = document.getElementById('historyList');
-            const userPhone = localStorage.getItem('suptemiz_userPhone');
-            let display = (currentRole === 'client' && userPhone) ? allOrders.filter(o=>o.userPhone===userPhone) : allOrders;
-            if(display.length===0) { container.innerHTML='<div class="empty-state">📭 Нет заказов</div>'; return; }
-            container.innerHTML = display.map(order=>{
-                const cfg=getStatusConfig(order.status);
-                const canCancel = (currentRole==='client' && order.status==='Ожидает подтверждения');
-                return `<div class="history-item">
-                    <div class="flex-between"><strong>${order.orderDate}</strong><span>${order.total} ₺</span></div>
-                    <div>${order.service}</div>
-                    <div><small>📍 ${order.address}</small></div>
-                    <div><span class="status-badge" style="background:${cfg.color}">${cfg.label}</span></div>
-                    ${canCancel ? `<div><button class="btn-small" onclick="updateOrderStatus(${order.id}, 'Отменён')">❌ Отменить</button></div>` : ''}
-                    <div class="order-id">🆔 #${order.id}</div>
-                </div>`;
-            }).join('');
-        }
-
-        // Компактные кнопки статуса для админки
-        function loadAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            if(allOrders.length===0) { container.innerHTML='<p style="text-align:center;padding:20px;">Нет заказов</p>'; return; }
-            container.innerHTML = allOrders.map(order => {
-                const cfg = getStatusConfig(order.status);
-                // Набор действий в зависимости от текущей роли (админ/клинер) - для простоты даём все кнопки, но можно ограничить.
-                // Админ может все, клинер тоже все (это уже не критично)
-                const actions = [
-                    { label:'✅', title:'Подтвердить', status:'Подтверждён', action:'confirm' },
-                    { label:'🚗', title:'Выехал', status:'Клинер выехал', action:'arrive' },
-                    { label:'🧹', title:'Начать уборку', status:'Уборка началась', action:'start' },
-                    { label:'✔️', title:'Уборка завершена', status:'Уборка завершена', action:'complete' },
-                    { label:'⭐', title:'Завершить заказ', status:'Завершён', action:'finish' },
-                    { label:'❌', title:'Отменить', status:'Отменён', action:'cancel' }
-                ];
-                return `
-                    <div class="admin-order-item">
-                        <div><strong>${order.userName}</strong> | ${order.userPhone}</div>
-                        <div>${order.service} | ${order.total} ₺</div>
-                        <div><small>${order.address}</small></div>
-                        <div><span class="status-badge" style="background:${cfg.color}">${cfg.label}</span></div>
-                        <div class="compact-status-actions">
-                            ${actions.map(a => `<button class="compact-status-btn" data-action="${a.action}" title="${a.title}" onclick="updateOrderStatus(${order.id}, '${a.status}')">${a.label}</button>`).join('')}
-                        </div>
-                        <div class="order-id">🆔 #${order.id}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function loadProfile() {
-            document.getElementById('userName').value = localStorage.getItem('suptemiz_userName') || '';
-            document.getElementById('userPhone').value = localStorage.getItem('suptemiz_userPhone') || '';
-            checkRole();
-        }
-        function saveProfile() {
-            const name = document.getElementById('userName').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
-            if(name && phone) {
-                localStorage.setItem('suptemiz_userName', name);
-                localStorage.setItem('suptemiz_userPhone', phone);
-                checkRole();
-                showToast('✅ Профиль сохранён!');
-            } else showToast('Заполните имя и телефон');
-        }
-        function checkRole() {
-            const phone = localStorage.getItem('suptemiz_userPhone');
-            if(ADMIN_PHONES.includes(phone)) { currentRole='admin'; document.getElementById('roleBadge').innerHTML='👑 Администратор'; document.getElementById('adminFab').style.display='flex'; }
-            else if(CLEANER_PHONES.includes(phone)) { currentRole='cleaner'; document.getElementById('roleBadge').innerHTML='🧹 Клинер'; document.getElementById('adminFab').style.display='flex'; }
-            else { currentRole='client'; document.getElementById('roleBadge').innerHTML='👤 Клиент'; document.getElementById('adminFab').style.display='none'; }
-            loadHistory();
-        }
-        function showRegisterModal(callback) {
-            const modal = document.getElementById('registerModal');
-            document.getElementById('modalName').value = localStorage.getItem('suptemiz_userName') || '';
-            document.getElementById('modalPhone').value = localStorage.getItem('suptemiz_userPhone') || '';
-            modal.classList.add('active');
-            const saveHandler = () => {
-                const name = document.getElementById('modalName').value.trim();
-                const phone = document.getElementById('modalPhone').value.trim();
-                if(name && phone) {
-                    localStorage.setItem('suptemiz_userName', name);
-                    localStorage.setItem('suptemiz_userPhone', phone);
-                    modal.classList.remove('active');
-                    if(callback) callback();
-                } else showToast('Заполните имя и телефон');
-            };
-            const closeHandler = () => modal.classList.remove('active');
-            document.getElementById('modalSaveBtn').onclick = saveHandler;
-            document.getElementById('modalCloseBtn').onclick = closeHandler;
-        }
-
-        // Вкладки
-        function initTabs() {
-            document.querySelectorAll('.nav-tab').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-                    document.getElementById(tab+'-tab').classList.add('active');
-                    if(tab==='history') loadHistory();
-                    if(tab==='profile') loadProfile();
-                });
-            });
-        }
-
-        // Установка минимальной даты
-        const todayDate = new Date().toISOString().split('T')[0];
-        document.getElementById('date').min = todayDate;
-        document.getElementById('date').value = todayDate;
-        document.querySelectorAll('input[name="service"], #extra_ac, #extra_window, #extra_fridge').forEach(el=>el.addEventListener('change',calculateTotal));
-        document.getElementById('orderBtn').addEventListener('click',createOrder);
-        document.getElementById('saveProfileBtn').addEventListener('click',saveProfile);
-        const adminFab = document.getElementById('adminFab');
-        const adminModal = document.getElementById('adminModal');
-        adminFab?.addEventListener('click', () => {
-            loadAdminOrders();
-            adminModal.classList.add('active');
-        });
-        // Закрытие модалки через крестик или клик на фон
-        const closeAdminBtn = document.getElementById('closeAdminModalBtn');
-        closeAdminBtn?.addEventListener('click', () => adminModal.classList.remove('active'));
-        adminModal?.addEventListener('click', (e) => { if(e.target === adminModal) adminModal.classList.remove('active'); });
-
-        initTabs();
-        calculateTotal();
-        loadProfile();
-        listenToOrders();
-    </script>
+    <script src="app.js" defer></script>
 </body>
 </html>
