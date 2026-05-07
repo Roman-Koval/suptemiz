@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#2E7D32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SupTemiz">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>SupTemiz — Клининг Северного Кипра</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -497,9 +502,9 @@
         const CLEANER_PHONES = ['05331234567', '+905331234567'];
         let allOrders = [];
         let currentRole = 'client';
-        let isNewCustomer = true; // будет вычисляться
+        let isNewCustomer = true;
 
-        // --- Маска телефона +90 ---
+        // Маска телефона +90
         function phoneMask(input) {
             let num = input.value.replace(/\D/g, '').slice(0, 10);
             let formatted = '+90';
@@ -512,7 +517,7 @@
         document.getElementById('userPhone')?.addEventListener('input', function(e) { phoneMask(e.target); });
         document.getElementById('modalPhone')?.addEventListener('input', function(e) { phoneMask(e.target); });
 
-        // --- Тёмная тема ---
+        // Тёмная тема
         function initTheme() {
             const saved = localStorage.getItem('suptemiz_theme');
             const isDark = saved === 'dark';
@@ -534,7 +539,6 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
-        // Расчёт цены с учётом скидки
         function calculateTotal() {
             const service = document.querySelector('input[name="service"]:checked').value;
             let base = { standard:500, general:950, after_repair:1800, office:700 }[service] || 500;
@@ -543,10 +547,9 @@
             if (document.getElementById('extra_window').checked) extras += 150;
             if (document.getElementById('extra_fridge').checked) extras += 100;
             let total = base + extras;
-            // Скидка 25% для новых клиентов
             const phone = localStorage.getItem('suptemiz_userPhone');
             const userHasOrders = allOrders.some(o => o.userPhone === phone);
-            const discount = (!userHasOrders && phone && !isNaN(phone)) ? 0.25 : 0;
+            const discount = (!userHasOrders && phone && phone.replace(/\D/g,'').length >= 10) ? 0.25 : 0;
             let finalTotal = total * (1 - discount);
             finalTotal = Math.round(finalTotal);
             document.getElementById('totalPrice').innerHTML = finalTotal + ' ₺';
@@ -584,10 +587,9 @@
             return map[status] || { label:status, color:'#999' };
         }
 
-        // Проверка, новый ли клиент (обновляется при загрузке заказов)
         function updateNewCustomerStatus() {
             const phone = localStorage.getItem('suptemiz_userPhone');
-            if (!phone) return true;
+            if (!phone) return;
             const hasOrders = allOrders.some(o => o.userPhone === phone);
             isNewCustomer = !hasOrders;
             const banner = document.getElementById('promoBanner');
@@ -599,7 +601,6 @@
             calculateTotal();
         }
 
-        // Firebase слушатель
         function listenToOrders() {
             ordersRef.on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -624,7 +625,6 @@
                 showRegisterModal(() => createOrder());
                 return;
             }
-            // Нормализация телефона (убираем пробелы, оставляем только +90...)
             phone = phone.replace(/\s/g, '');
             const today = new Date().toISOString().split('T')[0];
             const selectedDate = document.getElementById('date').value;
@@ -638,7 +638,8 @@
                 createdAt: new Date().toISOString(),
                 orderDate: selectedDate || today,
                 orderTime: document.getElementById('time').value,
-                address, district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
+                address,
+                district: document.getElementById('district').options[document.getElementById('district').selectedIndex].text,
                 rooms, area,
                 service: getSelectedServiceText(),
                 extrasList: getExtras(),
@@ -651,7 +652,6 @@
             };
             await ordersRef.push(order);
             showToast('✅ Заказ оформлен!');
-            // Очистка
             document.getElementById('address').value = '';
             document.getElementById('extra_ac').checked = false;
             document.getElementById('extra_window').checked = false;
@@ -715,7 +715,6 @@
             }).join('');
         }
 
-        // --- Профиль ---
         function loadProfile() {
             document.getElementById('userName').value = localStorage.getItem('suptemiz_userName') || '';
             let phone = localStorage.getItem('suptemiz_userPhone') || '';
@@ -767,7 +766,6 @@
             document.getElementById('modalCloseBtn').onclick = closeHandler;
         }
 
-        // Инициализация
         function initTabs() {
             document.querySelectorAll('.nav-tab').forEach(btn => {
                 btn.addEventListener('click', () => {
