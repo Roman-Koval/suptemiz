@@ -2,7 +2,7 @@
   "name": "SupTemiz — Клининг Северного Кипра",
   "short_name": "SupTemiz",
   "description": "Профессиональная уборка в Северном Кипре",
-  "start_url": "/",
+  "start_url": "/suptemiz/",
   "display": "standalone",
   "theme_color": "#2E7D32",
   "background_color": "#ffffff",
