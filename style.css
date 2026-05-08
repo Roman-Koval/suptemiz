@@ -13,84 +13,51 @@ body {
     line-height: 1.5;
 }
 
-/* Тёмная тема */
 body.dark {
-    background: #0a0a0a;
-    color: #e0e0e0;
+    background: #121212;
+    color: #e8e8e8;
 }
 
-/* ========== СТЕКЛОМОРФИЗМ ========== */
-.glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(0px);
-    border-radius: 28px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+body.dark .card,
+body.dark header,
+body.dark .main-nav,
+body.dark .history-item,
+body.dark .modal-content {
+    background: #1e1e1e;
+    border-color: #333;
 }
 
-body.dark .glass-card {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+body.dark .form-input,
+body.dark .form-select,
+body.dark .service-option,
+body.dark .extra-option {
+    background: #2a2a2a;
+    color: #e8e8e8;
+    border-color: #444;
 }
 
-/* ========== АНИМАЦИИ ========== */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+body.dark .btn-secondary {
+    background: #3a3a3a;
+    color: white;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
-.history-item {
-    animation: fadeInUp 0.4s ease-out;
-}
-
-/* ========== APP CONTAINER ========== */
 .app-container {
     max-width: 500px;
     margin: 0 auto;
     min-height: 100vh;
-    position: relative;
 }
 
 /* ========== HEADER ========== */
 header {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
+    background: white;
     padding: 14px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #e0e0e0;
     position: sticky;
     top: 0;
     z-index: 100;
-}
-
-body.dark header {
-    background: rgba(18, 18, 18, 0.98);
-    border-bottom-color: rgba(255, 255, 255, 0.05);
 }
 
 .logo {
@@ -115,7 +82,6 @@ body.dark header {
     align-items: center;
 }
 
-/* ========== КНОПКИ И ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ========== */
 .role-badge {
     background: linear-gradient(135deg, #2E7D32, #4CAF50);
     padding: 6px 14px;
@@ -123,63 +89,44 @@ body.dark header {
     font-size: 12px;
     font-weight: 600;
     color: white;
-    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
 }
 
 .theme-toggle, .lang-select {
-    background: rgba(0, 0, 0, 0.05);
+    background: #f0f0f0;
     border: none;
     border-radius: 40px;
     padding: 8px 14px;
-    font-size: 14px;
     cursor: pointer;
+    font-size: 14px;
     transition: all 0.2s;
 }
 
-body.dark .theme-toggle, body.dark .lang-select {
-    background: rgba(255, 255, 255, 0.1);
+body.dark .theme-toggle,
+body.dark .lang-select {
+    background: #2a2a2a;
     color: white;
 }
 
-.theme-toggle:hover, .lang-select:hover {
-    transform: scale(1.02);
-    background: rgba(0, 0, 0, 0.1);
-}
-
-/* ========== ПРОМО-БАННЕР ========== */
+/* ========== PROMO ========== */
 .promo-banner {
-    background: linear-gradient(135deg, #2E7D32, #4CAF50, #81c784);
-    background-size: 200% 200%;
-    animation: gradientShift 3s ease infinite;
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
     color: white;
     padding: 14px 20px;
     margin: 16px 12px 0;
     border-radius: 28px;
     text-align: center;
     font-weight: 600;
-    box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* ========== НАВИГАЦИЯ ========== */
+/* ========== NAVIGATION ========== */
 .main-nav {
     display: flex;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
+    background: white;
     margin: 16px 12px;
     border-radius: 60px;
     padding: 6px;
     gap: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-body.dark .main-nav {
-    background: rgba(30, 30, 30, 0.9);
 }
 
 .nav-tab {
@@ -197,10 +144,9 @@ body.dark .main-nav {
 .nav-tab.active {
     background: linear-gradient(135deg, #2E7D32, #4CAF50);
     color: white;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
 }
 
-/* ========== КАРТОЧКИ ========== */
+/* ========== CARDS ========== */
 .card {
     background: white;
     margin: 12px 0;
@@ -210,38 +156,14 @@ body.dark .main-nav {
     transition: all 0.2s;
 }
 
-body.dark .card {
-    background: #1e1e1e;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
-}
-
-/* ========== ФОРМЫ ========== */
-.form-select, .form-input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 20px;
+.form-row {
+    display: flex;
+    gap: 12px;
     margin-top: 8px;
-    font-size: 16px;
-    transition: all 0.2s;
-    background: #fafafa;
 }
 
-body.dark .form-select, body.dark .form-input {
-    background: #2a2a2a;
-    border-color: #444;
-    color: white;
-}
-
-.form-select:focus, .form-input:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+.form-group {
+    flex: 1;
 }
 
 .form-group label {
@@ -252,11 +174,24 @@ body.dark .form-select, body.dark .form-input {
     font-weight: 500;
 }
 
-body.dark .form-group label {
-    color: #aaa;
+.form-input, .form-select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 20px;
+    margin-top: 8px;
+    font-size: 16px;
+    transition: all 0.2s;
+    background: #fafafa;
 }
 
-/* ========== ОПЦИИ УСЛУГ ========== */
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* ========== SERVICE OPTIONS ========== */
 .service-option, .extra-option {
     display: flex;
     align-items: center;
@@ -266,10 +201,6 @@ body.dark .form-group label {
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-body.dark .service-option, body.dark .extra-option {
-    background: #2a2a2a;
 }
 
 .service-option:hover, .extra-option:hover {
@@ -294,7 +225,7 @@ body.dark .service-option, body.dark .extra-option {
     font-size: 13px;
 }
 
-/* ========== КНОПКИ ========== */
+/* ========== BUTTONS ========== */
 .btn-primary {
     width: 100%;
     padding: 16px;
@@ -307,7 +238,6 @@ body.dark .service-option, body.dark .extra-option {
     cursor: pointer;
     margin: 12px 0;
     transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(46, 125, 50, 0.3);
 }
 
 .btn-primary:active {
@@ -325,24 +255,24 @@ body.dark .service-option, body.dark .extra-option {
     transition: all 0.2s;
 }
 
-body.dark .btn-secondary {
-    background: #3a3a3a;
+.btn-small {
+    background: linear-gradient(135deg, #2E7D32, #4CAF50);
     color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
 }
 
-/* ========== ИСТОРИЯ ЗАКАЗОВ ========== */
+/* ========== HISTORY ========== */
 .history-item {
     background: white;
     padding: 18px;
     border-radius: 24px;
     margin-bottom: 14px;
     transition: all 0.2s;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-}
-
-body.dark .history-item {
-    background: #1e1e1e;
-    border-color: rgba(255, 255, 255, 0.05);
 }
 
 .history-header {
@@ -359,9 +289,9 @@ body.dark .history-item {
     font-size: 12px;
     font-weight: 600;
     margin-top: 10px;
+    color: white;
 }
 
-/* ========== СТАТУС-КНОПКИ ========== */
 .compact-status-actions {
     display: flex;
     flex-wrap: wrap;
@@ -380,10 +310,6 @@ body.dark .history-item {
     font-weight: 500;
 }
 
-.compact-status-btn:active {
-    transform: scale(0.96);
-}
-
 .compact-status-btn.confirm { background: #2196F3; color: white; }
 .compact-status-btn.arrive { background: #FF9800; color: white; }
 .compact-status-btn.start { background: #FF5722; color: white; }
@@ -391,21 +317,14 @@ body.dark .history-item {
 .compact-status-btn.finish { background: #2E7D32; color: white; }
 .compact-status-btn.cancel { background: #f44336; color: white; }
 
-/* ========== ОТЗЫВЫ ========== */
+/* ========== REVIEWS ========== */
 .review-section {
     margin-top: 16px;
     border-top: 1px solid #eee;
     padding-top: 14px;
-    font-size: 13px;
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), rgba(46, 125, 50, 0.05));
+    background: rgba(76, 175, 80, 0.05);
     border-radius: 20px;
     padding: 14px;
-    animation: slideIn 0.3s ease-out;
-}
-
-body.dark .review-section {
-    border-top-color: #333;
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(46, 125, 50, 0.1));
 }
 
 .review-stars {
@@ -418,12 +337,10 @@ body.dark .review-section {
     font-size: 28px;
     cursor: pointer;
     color: #ddd;
-    transition: all 0.1s;
 }
 
 .star.active {
     color: #FFD700;
-    text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
 .review-text {
@@ -435,35 +352,17 @@ body.dark .review-section {
     font-size: 14px;
 }
 
-body.dark .review-text {
-    background: #2a2a2a;
-    border-color: #444;
-    color: white;
-}
-
 .review-photo {
     margin: 10px 0;
 }
 
 .review-photo img {
     max-width: 100%;
-    border-radius: 20px;
-    max-height: 200px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    max-height: 150px;
 }
 
-.btn-small {
-    background: linear-gradient(135deg, #2E7D32, #4CAF50);
-    color: white;
-    border: none;
-    border-radius: 40px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-/* ========== МОДАЛЬНЫЕ ОКНА ========== */
+/* ========== MODAL ========== */
 .modal {
     display: none;
     position: fixed;
@@ -471,7 +370,7 @@ body.dark .review-text {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     z-index: 1000;
     justify-content: center;
@@ -491,11 +390,6 @@ body.dark .review-text {
     overflow-y: auto;
     position: relative;
     padding: 24px;
-    animation: fadeInUp 0.3s ease-out;
-}
-
-body.dark .modal-content {
-    background: #1e1e1e;
 }
 
 .modal-close-icon {
@@ -508,7 +402,7 @@ body.dark .modal-content {
     border: none;
 }
 
-/* ========== TOAST УВЕДОМЛЕНИЯ ========== */
+/* ========== OTHER ========== */
 .toast-message {
     position: fixed;
     bottom: 100px;
@@ -523,15 +417,12 @@ body.dark .modal-content {
     pointer-events: none;
     z-index: 1000;
     font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .toast-message.show {
     opacity: 1;
 }
 
-/* ========== FAB АДМИНКИ ========== */
 .admin-fab {
     position: fixed;
     bottom: 24px;
@@ -548,14 +439,8 @@ body.dark .modal-content {
     z-index: 200;
     font-size: 24px;
     color: white;
-    transition: all 0.2s;
 }
 
-.admin-fab:hover {
-    transform: scale(1.05);
-}
-
-/* ========== СИНХРОНИЗАЦИЯ ========== */
 .sync-status {
     font-size: 12px;
     text-align: center;
@@ -584,7 +469,6 @@ h3 {
     text-align: center;
     padding: 48px;
     color: #999;
-    font-size: 14px;
 }
 
 .avatar {
