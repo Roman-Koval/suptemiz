@@ -6,12 +6,11 @@
     <meta name="theme-color" content="#2E7D32">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SupTemiz">
+    <title>SupTemiz — Клининг Северного Кипра</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <title>SupTemiz — Клининг Северного Кипра</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -35,14 +34,11 @@
         <div class="promo-banner" id="promoBanner">🎉 Первая уборка — 25% скидка новым клиентам!</div>
         <div class="sync-status" id="syncStatus">🟢 Онлайн синхронизация</div>
 
-        <nav class="main-nav">
-            <button class="nav-tab active" data-tab="order">📋 Заказ</button>
-            <button class="nav-tab" data-tab="history">📜 История</button>
-            <button class="nav-tab" data-tab="profile">👤 Профиль</button>
-        </nav>
+        <!-- Динамическая навигация -->
+        <nav class="main-nav" id="mainNav"></nav>
 
-        <!-- Заказ -->
-        <div id="order-tab" class="tab-content active">
+        <!-- Вкладка Заказ (только для клиента) -->
+        <div id="order-tab" class="tab-content">
             <div class="card">
                 <h3>📍 Район</h3>
                 <select id="district" class="form-select">
@@ -95,10 +91,12 @@
             <button class="btn-primary" id="orderBtn">📞 Оформить + Оплатить</button>
         </div>
 
-        <!-- История -->
-        <div id="history-tab" class="tab-content"><div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div></div>
+        <!-- Вкладка История/Заказы (для клиента показывает его заказы, для админа/клинера — все) -->
+        <div id="history-tab" class="tab-content">
+            <div id="historyList" class="history-list"><div class="empty-state">📭 Нет заказов</div></div>
+        </div>
 
-        <!-- Профиль -->
+        <!-- Вкладка Профиль -->
         <div id="profile-tab" class="tab-content">
             <div class="card">
                 <div class="avatar">👤</div>
@@ -124,16 +122,8 @@
         </div>
     </div>
 
-    <!-- Админ FAB -->
+    <!-- Админ FAB (только для админа/клинера) -->
     <div id="adminFab" class="admin-fab" style="display: none;">🔧</div>
-    
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close-icon" onclick="closeModal('adminModal')">✕</button>
-            <h3>🔧 Управление заказами</h3>
-            <div id="adminOrdersList">Управляйте статусами прямо из истории заказов</div>
-        </div>
-    </div>
 
     <div id="toast" class="toast-message"></div>
 
